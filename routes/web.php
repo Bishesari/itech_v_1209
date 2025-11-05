@@ -30,3 +30,8 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 });
+
+Route::middleware('guest')->group(function () {
+    Volt::route('registration', 'auth.my-register')->name('registration');
+});
+
