@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $users = [
-            ['user_name' => 'Yasser', 'password' => '673673673', 'type' => 'superadmin'],
+            ['user_name' => 'Yasser.Bishesari', 'password' => '403Institute$#'],
         ];
         foreach ($users as $data) {
             User::create($data);

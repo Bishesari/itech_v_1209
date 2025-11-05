@@ -35,3 +35,15 @@ Route::middleware('guest')->group(function () {
     Volt::route('registration', 'auth.my-register')->name('registration');
 });
 
+
+Volt::route('fields', 'field.crud')->name('fields')->middleware(['auth']);
+
+Volt::route('standards', 'standard.index')->name('standards')->middleware(['auth']);
+Volt::route('standard/create', 'standard.create')->name('create_standard')->middleware(['auth']);
+Volt::route('standard/{standard}/edit', 'standard.edit')->name('edit_standard')->middleware(['auth', 'signed']);
+Volt::route('standard/{standard}/chapters', 'standard.chapter.crud')->name('chapters')->middleware(['auth', 'signed']);
+
+
+Volt::route('question/{sid}/{cid}/index', 'question.index')->name('questions')->middleware(['auth', 'signed']);
+Volt::route('question/{sid}/{cid}/create', 'question.create')->name('create_question')->middleware(['auth', 'signed']);
+

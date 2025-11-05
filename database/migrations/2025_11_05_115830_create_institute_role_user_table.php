@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('institute_role_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('institute_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('institute_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('role_id')->constrained()->cascadeOnDelete();
 
             $table->foreignId('assigned_by')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('assigned_at')->nullable();
             $table->unique(['institute_id', 'role_id', 'user_id']); // جلوگیری از تخصیص چندباره به یک کاربر در یک موسسه
             $table->index('institute_id');
             $table->index('user_id');

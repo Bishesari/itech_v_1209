@@ -7,17 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Profile extends Model
 {
-    protected $fillable = ['user_id', 'identifier_type', 'n_code', 'created'];
-    protected static function boot(): void
-    {
-        parent::boot();
-        static::creating(function ($model) {
-            $model->created = j_d_stamp_en();
-        });
-        static::updating(function ($model) {
-            $model->updated = j_d_stamp_en();
-        });
-    }
+    protected $fillable = ['user_id', 'identifier_type', 'n_code'];
     public function user():BelongsTo
     {
         return $this->belongsTo(User::class);

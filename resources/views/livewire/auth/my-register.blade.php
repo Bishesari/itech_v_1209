@@ -1,7 +1,9 @@
 <?php
 
+use App\Jobs\SendOtp;
 use App\Jobs\SendPass;
 use App\Models\Contact;
+use App\Models\InstituteRoleUser;
 use App\Models\OtpLog;
 use App\Models\User;
 use App\Rules\NCode;
@@ -19,7 +21,6 @@ class extends Component {
     public int $timer = 0;
     public string $otp_log_check_err = '';
     public string $u_otp = '';
-    public bool $opt_verified = false;
 
     protected function rules(): array
     {
@@ -117,14 +118,18 @@ class extends Component {
             ->first();
 
         if ($latest_otp->otp == $this->u_otp and time() < $latest_otp->otp_next_try_time) {
-            $this->validateOnly('u_otp');
+            $this->dispatch('stop_timer');
             $pass = simple_pass(8);
             $user = User::create([
                 'user_name' => $this->n_code,
                 'password' => $pass
             ]);
 
-            $this->dispatch('stop_timer');
+            InstituteRoleUser::create([
+                'user_id' => $user->id,
+                'role_id' => 1,
+                'assigned_by' => $user->id,
+            ]);
 
             DB::table('otp_logs')->where('n_code', $this->n_code)->where('mobile_nu', $this->mobile_nu)->delete();
             $contact = Contact::firstOrCreate(['mobile_nu' => $this->mobile_nu, 'verified' => 1]);
@@ -162,20 +167,20 @@ class extends Component {
         <!-- Session Status -->
         <x-auth-session-status class="text-center" :status="session('status')"/>
         <form method="POST" wire:submit="check_inputs" class="flex flex-col gap-6" autocomplete="off">
-            @if($opt_verified)
-                @php($readonly='readonly')
-            @else
-                @php($readonly = '')
-            @endif
-            <x-my.flt_lbl name="n_code" label="{{__('کدملی:')}}" dir="ltr" maxlength="10" :readonly="$readonly"
+            <x-my.flt_lbl name="n_code" label="{{__('کدملی:')}}" dir="ltr" maxlength="10"
                           class="tracking-wider font-semibold" autofocus required/>
             <x-my.flt_lbl name="mobile_nu" label="{{__('شماره موبایل:')}}" dir="ltr" maxlength="11"
-                          :readonly="$readonly"
                           class="tracking-wider font-semibold" required/>
             <flux:button type="submit" variant="primary" color="teal" class="w-full cursor-pointer">
                 {{ __('ادامه ثبت نام') }}
             </flux:button>
         </form>
+
+        <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
+            <span>{{ __('حساب کاربری داشته اید؟') }}</span>
+            <flux:link :href="route('login')" wire:navigate>{{ __('وارد شوید') }}</flux:link>
+        </div>
+
     </div>
 
 
