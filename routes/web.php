@@ -33,6 +33,8 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware('guest')->group(function () {
     Volt::route('registration', 'auth.my-register')->name('registration');
+    Volt::route('forgotten-password', 'auth.my-forgot-password')
+        ->name('forgotten.password');
 });
 
 
@@ -43,7 +45,14 @@ Volt::route('standard/create', 'standard.create')->name('create_standard')->midd
 Volt::route('standard/{standard}/edit', 'standard.edit')->name('edit_standard')->middleware(['auth', 'signed']);
 Volt::route('standard/{standard}/chapters', 'standard.chapter.crud')->name('chapters')->middleware(['auth', 'signed']);
 
-
 Volt::route('question/{sid}/{cid}/index', 'question.index')->name('questions')->middleware(['auth', 'signed']);
 Volt::route('question/{sid}/{cid}/create', 'question.create')->name('create_question')->middleware(['auth', 'signed']);
 
+Volt::route('users', 'user.index')->name('users')->middleware('auth');
+Volt::route('user/{user}/show', 'user.show')->name('show_user')->middleware(['auth', 'signed']);
+
+Volt::route('institutes', 'institute.index')->name('institutes')->middleware('auth');
+Volt::route('institute/{institute}/originators', 'institute.originators')->name('institute_originators')->middleware(['auth', 'signed']);
+
+Volt::route('roles', 'role.index')->name('roles')->middleware('auth');
+Volt::route('role/{role}/show', 'role.show')->name('show_role')->middleware(['auth', 'signed']);

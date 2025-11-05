@@ -156,8 +156,6 @@ class extends Component {
             $this->otp_log_check_err = 'کد منقضی شده است.';
         }
     }
-
-
 }; ?>
 
 <div>

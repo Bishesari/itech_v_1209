@@ -15,7 +15,7 @@
                 <!-- Remember Me -->
                 <flux:checkbox name="remember" :label="__('بخاطرسپاری')" :checked="old('remember')" class="cursor-pointer" />
                 @if (Route::has('password.request'))
-                    <flux:link class="text-sm" :href="route('password.request')" wire:navigate tabindex="-1">
+                    <flux:link class="text-sm" :href="route('forgotten.password')" wire:navigate tabindex="-1">
                         {{ __('بازیابی کلمه عبور') }}
                     </flux:link>
                 @endif

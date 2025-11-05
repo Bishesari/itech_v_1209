@@ -18,6 +18,12 @@
                 <flux:navlist.group :heading="__('اطلاعات پایه')" class="grid" expandable :expanded="request()->routeIs(['fields', 'standards'])" >
                     <flux:navlist.item icon="user-group" :href="route('fields')" :current="request()->routeIs('fields')" wire:navigate>{{ __('رشته های آموزشی') }}</flux:navlist.item>
                     <flux:navlist.item icon="user-group" :href="route('standards')" :current="request()->routeIs('standards')" wire:navigate>{{ __('استانداردهای آموزشی') }}</flux:navlist.item>
+
+                    <flux:navlist.item icon="user-group" :href="route('roles')" :current="request()->routeIs('roles')" wire:navigate>{{ __('نقشهای کاربری') }}</flux:navlist.item>
+                    <flux:navlist.item icon="user-group" :href="route('institutes')" :current="request()->routeIs('institutes')" wire:navigate>{{ __('آموزشگاهها') }}</flux:navlist.item>
+                    <flux:navlist.item icon="user-group" :href="route('users')" :current="request()->routeIs('users')" wire:navigate>{{ __('کاربران') }}</flux:navlist.item>
+
+
                 </flux:navlist.group>
 
                 <flux:navlist.group :heading="__('بانک سوال')" class="grid" expandable :expanded="request()->routeIs(['questions', 'create_question'])" >
