@@ -1,7 +1,8 @@
 <?php
 
-use App\Jobs\SendOtp;
-use App\Jobs\SendPass;
+use App\Jobs\OtpSend;
+use App\Jobs\SmsPass;
+use App\Jobs\SmsSend;
 use App\Models\Contact;
 use App\Models\InstituteRoleUser;
 use App\Models\OtpLog;
@@ -43,7 +44,7 @@ class extends Component {
     {
         if ($this->log_check()) {
             $otp = NumericOTP();
-            SendOtp::dispatch($this->mobile_nu, $otp);
+            OtpSend::dispatch($this->mobile_nu, $otp);
             OtpLog::create([
                 'ip' => request()->ip(),
                 'n_code' => $this->n_code,
@@ -139,7 +140,7 @@ class extends Component {
             ]);
             $user->contacts()->syncWithoutDetaching([$contact->id]);
 
-            SendPass::dispatch($this->mobile_nu, $this->n_code, $pass);
+            SmsPass::dispatch($this->mobile_nu, $this->n_code, $pass);
             $this->otp_log_check_err = '';
 
             event(new Registered($user));
