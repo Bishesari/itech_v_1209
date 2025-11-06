@@ -16,8 +16,14 @@ new class extends Component {
      */
     public function mount(): void
     {
-        $this->f_name_fa = Auth::user()->profile->f_name_fa;
-        $this->l_name_fa = Auth::user()->profile->l_name_fa;
+        if (Auth::user()->profile->f_name_fa)
+        {
+            $this->f_name_fa = Auth::user()->profile->f_name_fa;
+        }
+        if (Auth::user()->profile->l_name_fa)
+        {
+            $this->l_name_fa = Auth::user()->profile->l_name_fa;
+        }
         $this->user_name = Auth::user()->user_name;
     }
 
