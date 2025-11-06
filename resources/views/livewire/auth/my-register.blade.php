@@ -20,7 +20,7 @@ class extends Component {
     public string $mobile_nu = '';
     public int $timer = 0;
     public string $otp_log_check_err = '';
-    public string $u_otp  = '';
+    public string $u_otp = '';
 
     protected function rules(): array
     {
