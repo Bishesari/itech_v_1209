@@ -52,6 +52,6 @@ class User extends Authenticatable
     }
     public function contacts():belongsToMany
     {
-        return $this->belongsToMany(Contact::class)->using(ContactUser::class)->withPivot(['created', 'updated']);
+        return $this->belongsToMany(Contact::class);
     }
 }

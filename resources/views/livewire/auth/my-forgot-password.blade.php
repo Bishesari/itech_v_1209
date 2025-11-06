@@ -1,10 +1,9 @@
 <?php
 
-use App\Jobs\SendOtp;
-use App\Jobs\SendResetPass;
+use App\Jobs\OtpSend;
+use App\Jobs\ResetPass;
 use App\Models\OtpLog;
 use App\Models\Profile;
-use App\Services\ParsGreenService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
@@ -23,8 +22,7 @@ class extends Component {
     {
         return [
             'n_code' => ['required'],
-            'mobile_nu' => ['required'],
-            'u_otp' => ['required', 'digits:6']
+            'mobile_nu' => ['required']
         ];
     }
 
@@ -55,14 +53,13 @@ class extends Component {
         $this->validateOnly('mobile_nu');
         if ($this->log_check()) {
             $otp = NumericOTP();
-            SendOtp::dispatch($this->mobile_nu, $otp);
+            OtpSend::dispatch($this->mobile_nu, $otp);
             OtpLog::create([
                 'ip' => request()->ip(),
                 'n_code' => $this->n_code,
                 'mobile_nu' => $this->mobile_nu,
                 'otp' => $otp,
                 'otp_next_try_time' => time() + 120,
-                'created' => j_d_stamp_en(),
             ]);
             $this->timer = 120;
             $this->dispatch('set_timer');
@@ -141,9 +138,7 @@ class extends Component {
 
             DB::table('otp_logs')->where('n_code', $this->n_code)->where('mobile_nu', $this->mobile_nu)->delete();
 
-            SendResetPass::dispatch($this->mobile_nu, $user->user_name, $pass);
-//            $sms = new ParsGreenService();
-//            $sms->sendResetPassword($this->mobile_nu, $user->user_name, $pass);
+            ResetPass::dispatch($this->mobile_nu, $user->user_name, $pass);
 
             $this->otp_log_check_err = '';
             $this->redirect(route('login', absolute: false));
@@ -235,10 +230,9 @@ class extends Component {
             </div>
         </form>
         <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-400">
-            <flux:link :href="route('password.request')" wire:navigate>{{ __('شروع مجدد') }}</flux:link>
+            <flux:link :href="route('forgotten.password')" wire:navigate>{{ __('شروع مجدد') }}</flux:link>
         </div>
     @endif
-
 
     @script
     <script>
