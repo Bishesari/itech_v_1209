@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -53,60 +54,4 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Contact::class)->using(ContactUser::class)->withPivot(['created', 'updated']);
     }
-
-    public function institutes(): BelongsToMany
-    {
-        return $this->belongsToMany(Institute::class, 'institute_role_user')
-            ->withPivot(['role_id', 'assigned_by', 'assigned_at']);
-    }
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'institute_role_user')
-            ->withPivot(['institute_id', 'assigned_by', 'assigned_at']);
-    }
-    public function isSuperAdmin(): bool
-    {
-        return $this->type === 'superadmin';
-    }
-
-    public function isNewbie(): bool
-    {
-        return $this->type === 'newbie';
-    }
-    public function hasRoleInInstitute(string $roleName, int $instituteId): bool
-    {
-        // 👑 سوپرادمین همیشه دسترسی دارد
-        if ($this->isSuperAdmin()) {
-            return true;
-        }
-
-        // 🧍 تازه‌وارد هیچ دسترسی‌ای ندارد
-        if ($this->isNewbie()) {
-            return false;
-        }
-
-        // بقیه کاربران طبق نقش واقعی‌شان بررسی می‌شوند
-        return $this->roles()
-            ->where('roles.name', $roleName)
-            ->wherePivot('institute_id', $instituteId)
-            ->exists();
-    }
-
-    public function assignRoleInInstitute(int $roleId, int $instituteId, ?int $assignedBy = null): void
-    {
-        $this->roles()->syncWithoutDetaching([
-            $roleId => [
-                'institute_id' => $instituteId,
-                'assigned_by' => $assignedBy,
-                'assigned_at' => j_d_stamp_en(),
-            ],
-        ]);
-    }
-    public function removeRoleInInstitute(int $roleId, int $instituteId): void
-    {
-        $this->roles()->wherePivot('institute_id', $instituteId)
-            ->detach($roleId);
-    }
-
-
 }

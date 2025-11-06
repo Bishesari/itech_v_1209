@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Institute extends Model
 {
-    protected $fillable = ['short_name', 'full_name', 'abb', 'remain_credit', 'created','updated'];
+    protected $fillable = ['short_name', 'full_name', 'abb', 'remain_credit'];
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'institute_role_user')

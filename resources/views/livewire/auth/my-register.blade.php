@@ -2,7 +2,6 @@
 
 use App\Jobs\OtpSend;
 use App\Jobs\SmsPass;
-use App\Jobs\SmsSend;
 use App\Models\Contact;
 use App\Models\InstituteRoleUser;
 use App\Models\OtpLog;
@@ -117,7 +116,6 @@ class extends Component {
             ->where('mobile_nu', $this->mobile_nu)
             ->latest('id')
             ->first();
-
         if ($latest_otp->otp == $this->u_otp and time() < $latest_otp->otp_next_try_time) {
             $this->dispatch('stop_timer');
             $pass = simple_pass(8);
@@ -125,13 +123,10 @@ class extends Component {
                 'user_name' => $this->n_code,
                 'password' => $pass
             ]);
-
             InstituteRoleUser::create([
                 'user_id' => $user->id,
-                'role_id' => 1,
                 'assigned_by' => $user->id,
             ]);
-
             DB::table('otp_logs')->where('n_code', $this->n_code)->where('mobile_nu', $this->mobile_nu)->delete();
             $contact = Contact::firstOrCreate(['mobile_nu' => $this->mobile_nu, 'verified' => 1]);
             $user->profile()->create([
