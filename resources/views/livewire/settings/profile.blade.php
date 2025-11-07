@@ -7,8 +7,6 @@ use Illuminate\Validation\Rule;
 use Livewire\Volt\Component;
 
 new class extends Component {
-    public string $f_name_fa = '';
-    public string $l_name_fa = '';
     public string $user_name = '';
 
     /**
@@ -16,14 +14,6 @@ new class extends Component {
      */
     public function mount(): void
     {
-        if (Auth::user()->profile->f_name_fa)
-        {
-            $this->f_name_fa = Auth::user()->profile->f_name_fa;
-        }
-        if (Auth::user()->profile->l_name_fa)
-        {
-            $this->l_name_fa = Auth::user()->profile->l_name_fa;
-        }
         $this->user_name = Auth::user()->user_name;
     }
 
@@ -35,67 +25,40 @@ new class extends Component {
         $user = Auth::user();
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
 
-            'email' => [
+            'user_name' => [
                 'required',
                 'string',
-                'lowercase',
-                'email',
-                'max:255',
+                'max:30',
                 Rule::unique(User::class)->ignore($user->id)
             ],
         ]);
 
         $user->fill($validated);
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-
         $user->save();
 
         $this->dispatch('profile-updated', name: $user->name);
-    }
-
-    /**
-     * Send an email verification notification to the current user.
-     */
-    public function resendVerificationNotification(): void
-    {
-        $user = Auth::user();
-
-        if ($user->hasVerifiedEmail()) {
-            $this->redirectIntended(default: route('dashboard', absolute: false));
-
-            return;
-        }
-
-        $user->sendEmailVerificationNotification();
-
-        Session::flash('status', 'verification-link-sent');
     }
 }; ?>
 
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <x-settings.layout :heading="__('پروفایل')" :subheading="__('اطلاعات شخصی خود را بروز کنید.')">
-        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <div class="grid grid-cols-2 gap-4">
-                <flux:input wire:model="f_name_fa" :label="__('نام')" type="text" required autofocus class:input="text-center"/>
-                <flux:input wire:model="l_name_fa" :label="__('نام خانوادگی')" type="text" required autofocus class:input="text-center" />
-            </div>
-
+    <x-settings.layout :heading="__('نام کاربری')" :subheading="__('نام کاربری خود را ویرایش کنید.')">
+        <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6" autocomplete="off">
             <div>
                 <div class="grid grid-cols-2 gap-4 items-end">
-                    <flux:input wire:model="user_name" :label="__('نام کاربری')" type="text" required dir="ltr" class:input="text-center"/>
-                    <flux:button variant="ghost" type="submit" class="cursor-pointer" data-test="update-profile-button">
-                        {{ __('ذخیره تغییرات') }}
-                    </flux:button>
-                    <x-action-message class="me-3" on="profile-updated">
-                        {{ __('Saved.') }}
-                    </x-action-message>
+                    <flux:input wire:model="user_name" :label="__('نام کاربری')" type="text" required dir="ltr" class:input="text-center" maxlength="30"/>
+                    <div class="grid grid-cols-2 items-center">
+                        <flux:button variant="ghost" type="submit" class="cursor-pointer" data-test="update-profile-button">
+                            {{ __('ذخیره تغییرات') }}
+                        </flux:button>
+                        <x-action-message class="me-3 text-green-500" on="profile-updated">
+                            {{ __('ذخیره شد.') }}
+                        </x-action-message>
+
+                    </div>
+
                 </div>
             </div>
         </form>

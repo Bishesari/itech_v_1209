@@ -1,7 +1,7 @@
 <div class="flex items-start max-md:flex-col">
     <div class="me-10 w-full pb-4 md:w-[220px]">
         <flux:navlist>
-            <flux:navlist.item :href="route('profile.edit')" wire:navigate>{{ __('پروفایل') }}</flux:navlist.item>
+            <flux:navlist.item :href="route('profile.edit')" wire:navigate>{{ __('نام کاربری') }}</flux:navlist.item>
             <flux:navlist.item :href="route('user-password.edit')" wire:navigate>{{ __('کلمه عبور') }}</flux:navlist.item>
             @if (Laravel\Fortify\Features::canManageTwoFactorAuthentication())
                 <flux:navlist.item :href="route('two-factor.show')" wire:navigate>{{ __('کد دوعاملی') }}</flux:navlist.item>
