@@ -19,7 +19,7 @@
                 </flux:field>
                 @if (Route::has('password.request'))
                     <flux:link class="text-sm" :href="route('forgotten.password')" wire:navigate tabindex="-1">
-                        {{ __('بازیابی کلمه عبور') }}
+                        {{ __('ریست کلمه عبور') }}
                     </flux:link>
                 @endif
             </div>
