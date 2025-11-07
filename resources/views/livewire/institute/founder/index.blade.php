@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Rules\NCode;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Volt\Component;
 
@@ -105,6 +106,7 @@ new class extends Component {
             'institute_id' => $this->institute->id,
             'user_id' => $this->user_id,
             'role_id' => $founderRoleId,
+            'assigned_by' => Auth::user()->id,
         ]);
 
         if (!$record->wasRecentlyCreated) {
@@ -113,6 +115,7 @@ new class extends Component {
         }
         $this->dispatch('toast', message: 'موسس با موفقیت ثبت شد.', type: 'success');
         $this->modal('create-founder-profile')->close();
+        $this->getFounders();
     }
 
 }; ?>
