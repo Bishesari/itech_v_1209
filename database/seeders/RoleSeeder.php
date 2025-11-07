@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
         $roles = [
             ['name_en' => 'Newbie', 'name_fa' => 'تازه وارد'],
             ['name_en' => 'SuperAdmin', 'name_fa' => 'مدیر نرم افزار'],
-            ['name_en' => 'Originator', 'name_fa' => 'موسس'],
+            ['name_en' => 'Founder', 'name_fa' => 'موسس'],
             ['name_en' => 'Manager', 'name_fa' => 'مدیر'],
             ['name_en' => 'Assistant', 'name_fa' => 'مسئول اداری'],
             ['name_en' => 'Accountant', 'name_fa' => 'حسابدار'],

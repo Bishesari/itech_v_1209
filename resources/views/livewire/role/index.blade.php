@@ -62,7 +62,6 @@ new class extends Component {
                 'name_fa' => 'required|unique:roles|min:2',
                 'name_en' => 'required|unique:roles|min:3',
             ]);
-            $validated['updated'] = j_d_stamp_en();
             $editing_role->update($validated);
         }
         elseif ( ($editing_role['name_fa'] != $this->name_fa) and ($editing_role['name_en'] == $this->name_en) ){
@@ -70,7 +69,6 @@ new class extends Component {
                 'name_fa' => 'required|unique:roles|min:2',
                 'name_en' => 'required|min:3',
             ]);
-            $validated['updated'] = j_d_stamp_en();
             $editing_role->update($validated);
         }
         elseif ( ($editing_role['name_fa'] == $this->name_fa) and ($editing_role['name_en'] != $this->name_en) ){
@@ -78,7 +76,6 @@ new class extends Component {
                 'name_fa' => 'required|min:2',
                 'name_en' => 'required|unique:roles|min:3',
             ]);
-            $validated['updated'] = j_d_stamp_en();
             $editing_role->update($validated);
         }
         $this->modal('edit-role')->close();
@@ -96,12 +93,17 @@ new class extends Component {
 
 }; ?>
 
-<div>
-    <div class="bg-zinc-100 dark:bg-zinc-600 dark:text-zinc-300 py-3 relative">
-        <p class="font-semibold text-center">{{__('لیست نقشهای کاربری')}}</p>
-        <livewire:role.create/>
+<section class="w-full">
+    <div class="relative w-full mb-2">
+        <flux:heading size="xl" level="1">{{ __('نقشهای کاربری') }}</flux:heading>
+        <flux:subheading size="lg" class="mb-2">{{ __('بخش مدیریت نقشهای کاربری') }}</flux:subheading>
+        <flux:separator variant="subtle"/>
     </div>
-    <flux:table :paginate="$this->roles" class="text-center">
+    <div class="mb-2">
+        <livewire:role.create/>
+        <flux:separator class="mt-2" variant="subtle"/>
+    </div>
+    <flux:table :paginate="$this->roles" class="text-center inline">
         <flux:table.columns>
             <flux:table.column align="center" sortable :sorted="$sortBy === 'id'" :direction="$sortDirection"
                                wire:click="sort('id')">
@@ -118,15 +120,6 @@ new class extends Component {
                                wire:click="sort('name_en')">
                 {{__('عنوان لاتین')}}
             </flux:table.column>
-            <flux:table.column align="center" sortable :sorted="$sortBy === 'created'" :direction="$sortDirection"
-                               wire:click="sort('created')">
-                {{__('زمان ثبت')}}
-            </flux:table.column>
-
-            <flux:table.column align="center" sortable :sorted="$sortBy === 'updated'" :direction="$sortDirection"
-                               wire:click="sort('updated')">
-                {{__('زمان ویرایش')}}
-            </flux:table.column>
             <flux:table.column align="center">{{__('عملیات')}}</flux:table.column>
         </flux:table.columns>
 
@@ -141,22 +134,8 @@ new class extends Component {
                     <flux:table.cell class="whitespace-nowrap">{{ $role->id }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $role->name_fa }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $role->name_en }}</flux:table.cell>
-                    <flux:table.cell class="whitespace-nowrap">
-                        {{substr($role['created'], 0, 10)}}
-                        <hr>
-                        {{substr($role['created'], 11, 5)}}
-
-                    </flux:table.cell>
-                    <flux:table.cell class="whitespace-nowrap">
-                        {{substr($role['updated'], 0, 10)}}
-                        @if($role['updated'])
-                            <hr>
-                        @endif
-                        {{substr($role['updated'], 11, 5)}}
-                    </flux:table.cell>
 
                     <flux:table.cell>
-
                         <flux:button wire:click="edit({{$role}})" variant="ghost" size="sm" class="cursor-pointer">
                             <flux:icon.pencil-square variant="solid" class="text-amber-500 dark:text-amber-300 size-5"/>
                         </flux:button>
@@ -193,6 +172,6 @@ new class extends Component {
             </form>
         </div>
     </flux:modal>
-</div>
+</section>
 
 

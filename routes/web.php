@@ -52,7 +52,7 @@ Volt::route('users', 'user.index')->name('users')->middleware('auth');
 Volt::route('user/{user}/show', 'user.show')->name('show_user')->middleware(['auth', 'signed']);
 
 Volt::route('institutes', 'institute.index')->name('institutes')->middleware('auth');
-Volt::route('institute/{institute}/originators', 'institute.originators')->name('institute_originators')->middleware(['auth', 'signed']);
+Volt::route('institute/{institute}/founders', 'institute.founder.index')->name('institute_founders')->middleware(['auth', 'signed']);
 
 Volt::route('roles', 'role.index')->name('roles')->middleware('auth');
 Volt::route('role/{role}/show', 'role.show')->name('show_role')->middleware(['auth', 'signed']);

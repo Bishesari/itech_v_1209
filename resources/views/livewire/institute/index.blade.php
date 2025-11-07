@@ -70,7 +70,6 @@ new class extends Component {
                 'abb' => 'required|unique:institutes|size:3',
                 'remain_credit' => 'required|max:5',
             ]);
-            $validated['updated'] = j_d_stamp_en();
             $editing_institute->update($validated);
         } else {
             $validated = $this->validate([
@@ -79,7 +78,6 @@ new class extends Component {
                 'abb' => 'required|size:3',
                 'remain_credit' => 'required|max:5',
             ]);
-            $validated['updated'] = j_d_stamp_en();
             $editing_institute->update($validated);
         }
         $this->modal('edit-institute')->close();
@@ -97,12 +95,18 @@ new class extends Component {
 
 }; ?>
 
-<div>
-    <div class="bg-zinc-100 dark:bg-zinc-600 dark:text-zinc-300 py-3 relative">
-        <p class="font-semibold text-center">{{__('لیست آموزشگاهها')}}</p>
-        <livewire:institute.create/>
+<section class="w-full">
+    <div class="relative w-full mb-2">
+        <flux:heading size="xl" level="1">{{ __('آموزشگاهها') }}</flux:heading>
+        <flux:subheading size="lg" class="mb-2">{{ __('بخش مدیریت آموزشگاهها') }}</flux:subheading>
+        <flux:separator variant="subtle"/>
     </div>
-    <flux:table :paginate="$this->institutes" class="text-center">
+    <div class="mb-2">
+        <livewire:institute.create/>
+        <flux:separator class="mt-2" variant="subtle"/>
+    </div>
+
+    <flux:table :paginate="$this->institutes" class="text-center inline">
         <flux:table.columns>
             <flux:table.column align="center" sortable :sorted="$sortBy === 'id'" :direction="$sortDirection"
                                wire:click="sort('id')">
@@ -120,6 +124,8 @@ new class extends Component {
                 {{__('نام کامل')}}
             </flux:table.column>
 
+            <flux:table.column>{{__('موسس')}}</flux:table.column>
+
             <flux:table.column align="center" sortable :sorted="$sortBy === 'abb'" :direction="$sortDirection"
                                wire:click="sort('abb')">
                 {{__('نام اختصاری')}}
@@ -132,52 +138,33 @@ new class extends Component {
 
             <flux:table.column align="center">{{__('لوگو')}}</flux:table.column>
 
-            <flux:table.column align="center" sortable :sorted="$sortBy === 'created'" :direction="$sortDirection"
-                               wire:click="sort('created')">
-                {{__('زمان ثبت')}}
-            </flux:table.column>
-
-            <flux:table.column align="center" sortable :sorted="$sortBy === 'updated'" :direction="$sortDirection"
-                               wire:click="sort('updated')">
-                {{__('زمان ویرایش')}}
-            </flux:table.column>
             <flux:table.column align="center">{{__('عملیات')}}</flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
             @foreach ($this->institutes as $institute)
-                @php($ed = '')
-                @if($institute->id == $editing_id)
-                    @php($ed = 'bg-amber-100')
-                @endif
 
-                <flux:table.row class="hover:bg-green-50 {{$ed}}" :key="$institute->id">
+                <flux:table.row class="dark:hover:bg-zinc-900 transition hover:bg-zinc-100" :key="$institute->id">
                     <flux:table.cell class="whitespace-nowrap">{{ $institute->id }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $institute->short_name }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $institute->full_name }}</flux:table.cell>
+                    <flux:table.cell>
+                        @foreach($institute->usersByRole('Founder')->get() as $founder)
+                            {{$founder->profile->f_name_fa}}
+                            {{$founder->profile->l_name_fa}}
+                            <br>
+                        @endforeach
+
+                    </flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $institute->abb }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $institute->remain_credit }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $institute->logo_url }}</flux:table.cell>
-                    <flux:table.cell class="whitespace-nowrap">
-                        {{substr($institute['created'], 0, 10)}}
-                        <hr>
-                        {{substr($institute['created'], 11, 5)}}
-
-                    </flux:table.cell>
-                    <flux:table.cell class="whitespace-nowrap">
-                        {{substr($institute['updated'], 0, 10)}}
-                        @if($institute['updated'])
-                            <hr>
-                        @endif
-                        {{substr($institute['updated'], 11, 5)}}
-                    </flux:table.cell>
 
                     <flux:table.cell>
-
                         <flux:button tooltip="ویرایش" wire:click="edit({{$institute}})" variant="ghost" size="sm" class="cursor-pointer">
                             <flux:icon.pencil-square variant="solid" class="text-amber-500 dark:text-amber-300 size-5"/>
                         </flux:button>
-                        <flux:button tooltip="موسسان" href="{{URL::signedRoute('institute_originators', ['institute'=>$institute->id])}}" variant="ghost"
+                        <flux:button tooltip="موسسان" href="{{URL::signedRoute('institute_founders', ['institute'=>$institute->id])}}" variant="ghost"
                                      size="sm" class="cursor-pointer" wire:navigate>
                             <flux:icon.users class="text-blue-500 size-5"/>
                         </flux:button>
@@ -219,6 +206,6 @@ new class extends Component {
             </form>
         </div>
     </flux:modal>
-</div>
+</section>
 
 

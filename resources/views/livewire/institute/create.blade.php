@@ -40,16 +40,11 @@ new class extends Component {
 
 }; ?>
 
-<section class="absolute left-1 top-2">
-    <flux:modal.trigger name="create_institute">
-        <flux:tooltip content="درج آموزشگاه جدید" position="right">
-            <flux:button x-on:click.prevent="$dispatch('open-modal', 'create_institute')" variant="ghost" size="sm"
-                         class="cursor-pointer">
-                <flux:icon.plus-circle class="text-green-500"/>
-            </flux:button>
-        </flux:tooltip>
-    </flux:modal.trigger>
+<section>
 
+    <flux:modal.trigger name="create_institute">
+        <flux:button variant="primary" color="sky" size="sm" class="cursor-pointer">{{__('جدید')}}</flux:button>
+    </flux:modal.trigger>
     <flux:modal name="create_institute" :show="$errors->isNotEmpty()" focusable class="w-80 md:w-96" :dismissible="false">
         <div class="space-y-6">
             <div>
