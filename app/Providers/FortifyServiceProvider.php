@@ -36,7 +36,7 @@ class FortifyServiceProvider extends ServiceProvider
                     return redirect()->route('dashboard');
                 }
                 // بیش از یک نقش → هدایت به انتخاب نقش
-                return redirect()->route('fields');
+                return redirect()->route('select_role');
             }
         });
     }

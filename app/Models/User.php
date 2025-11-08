@@ -68,6 +68,4 @@ class User extends Authenticatable
             ->get();
     }
 
-
-
 }
