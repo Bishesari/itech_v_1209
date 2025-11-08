@@ -63,10 +63,7 @@ class User extends Authenticatable
             ->leftJoin('institutes', 'institute_role_user.institute_id', '=', 'institutes.id')
             ->where('institute_role_user.user_id', $this->id)
             ->select(
-                'roles.id as role_id',
-                'roles.name_fa as role_name',
-                'institutes.id as institute_id',
-                'institutes.short_name as institute_name'
+                'roles.id as role_id', 'roles.name_fa as role_name', 'institutes.id as institute_id', 'institutes.short_name as institute_name'
             )
             ->get();
     }

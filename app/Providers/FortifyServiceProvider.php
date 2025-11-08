@@ -23,8 +23,8 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->instance(LoginResponse::class, new class implements LoginResponse {
             public function toResponse($request)
             {
-                $user = Auth::user();
-                $roles = $user->getAllRolesWithInstitutes();
+
+                $roles = Auth::user()->getAllRolesWithInstitutes();
 
                 // فقط یک نقش دارد → مستقیم به داشبورد
                 if ($roles->count() === 1) {
@@ -33,17 +33,13 @@ class FortifyServiceProvider extends ServiceProvider
                         'active_role_id' => $role->role_id,
                         'active_institute_id' => $role->institute_id,
                     ]);
-
                     return redirect()->route('dashboard');
                 }
-
                 // بیش از یک نقش → هدایت به انتخاب نقش
                 return redirect()->route('fields');
             }
         });
-
     }
-
     /**
      * Bootstrap any application services.
      */
@@ -54,7 +50,6 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
 
     }
-
 
     /**
      * Configure Fortify actions.
