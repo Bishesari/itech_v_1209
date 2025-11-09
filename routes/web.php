@@ -52,3 +52,5 @@ Volt::route('institute/{institute}/founders', 'institute.founder.index')->name('
 
 Volt::route('roles', 'role.index')->name('roles')->middleware('auth');
 Volt::route('role/{role}/show', 'role.show')->name('show_role')->middleware(['auth', 'signed']);
+
+Volt::route('payment/callback', 'payment.callback');
