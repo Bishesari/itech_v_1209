@@ -19,12 +19,5 @@ class InstituteSeeder extends Seeder
             'abb' => 'ITC',
             'remain_credit' => '9999',
         ]);
-
-        Institute::create([
-            'short_name' => 'آی کد',
-            'full_name' => 'آموزشگاه هوش مصنوعی',
-            'abb' => 'ICC',
-            'remain_credit' => '9999',
-        ]);
     }
 }

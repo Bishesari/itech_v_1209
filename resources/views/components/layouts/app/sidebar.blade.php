@@ -51,7 +51,6 @@
                                         {{ auth()->user()->initials() }}
                                     </span>
                                 </span>
-
                                 <div class="grid flex-1 text-start text-sm leading-tight">
                                     <span class="truncate text-center">{{ auth()->user()->profile->f_name_fa . '، '. auth()->user()->profile->l_name_fa}}</span>
                                     <span class="truncate text-xs tracking-widest text-center">{{ auth()->user()->user_name }}</span>

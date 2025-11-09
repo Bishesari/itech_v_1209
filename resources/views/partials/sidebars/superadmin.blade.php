@@ -1,5 +1,5 @@
 <flux:navlist.group :heading="__('سکوی توسعه')" class="grid">
-    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('داشبرد') }}</flux:navlist.item>
+    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('داشبرد سوپر ادمین') }}</flux:navlist.item>
 </flux:navlist.group>
 
 <flux:navlist.group :heading="__('اطلاعات پایه')" class="grid" expandable :expanded="request()->routeIs(['roles', 'institutes', 'users', 'fields', 'standards'])" >
