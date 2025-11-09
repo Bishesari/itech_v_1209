@@ -1,17 +1,39 @@
 <?php
 
+use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
 new #[Layout('components.layouts.auth')]
 class extends Component {
-    public $roles;
+    public $roles = [];
+    public string $role_id = '';
 
     public function mount(): void
     {
         $this->roles = Auth::user()->getAllRolesWithInstitutes();
     }
+
+    public function setRole($roleId, $instituteId): void
+    {
+        $this->role_id = $roleId;
+        session([
+            'active_role_id' => $roleId,
+            'active_institute_id' => $instituteId ?? '',
+        ]);
+    }
+
+    public function dashboard(): void
+    {
+        if (empty($this->role_id)) {
+            $this->addError('role_id', 'لطفاً یک نقش انتخاب کنید.');
+            return;
+        }
+        // ✅ همه‌چیز اوکیه، هدایت به داشبورد
+        $this->redirectRoute('dashboard');
+    }
+
 }; ?>
 
 <div class="flex flex-col gap-6">
@@ -20,22 +42,24 @@ class extends Component {
         :description="__('برای ورود نقشی را انتخاب کنید.')"
     />
 
-    <flux:radio.group wire:model="shipping" label="Shipping" variant="cards" class="max-sm:flex-col">
-        <flux:radio value="standard" label="Standard" description="4-10 business days" checked />
-        <flux:radio value="fast" label="Fast" description="2-5 business days" />
-        <flux:radio value="next-day" label="Next day" description="1 business day" />
+    <flux:radio.group variant="buttons" class="flex-col gap-y-4">
+        @forelse($roles as $r)
+            <flux:radio icon="light-bulb" class="cursor-pointer"
+                        wire:click="setRole({{ $r->role_id }}, {{ $r->institute_id ?? 'null' }})">
+                <strong>{{ $r->role_name }}</strong>
+                <span>{{ ' - ' . $r->institute_name  ?? '' }}</span>
+
+            </flux:radio>
+        @empty
+            <p>شما هیچ نقشی ندارید.</p>
+        @endforelse
     </flux:radio.group>
 
+    @error('role_id')
+        <p class="text-red-500 text-sm text-center">{{ $message }}</p>
+    @enderror
 
-    @forelse($roles as $r)
-        <button
-            wire:click="selectRole({{ $r->role_id }}, {{ $r->institute_id ?? 'null' }})"
-        >
-            <strong>{{ $r->role_name }}</strong>  <!-- اینجا نمایش داده میشه -->
-            <span>{{ $r->institute_name ?? 'بدون آموزشگاه' }}</span>  <!-- اینجا هم نمایش داده میشه -->
-        </button>
-    @empty
-        <p>شما هیچ نقشی ندارید.</p>
-    @endforelse
+    <flux:button wire:click="dashboard" variant="primary" color="sky" class="cursor-pointer"
+                 size="sm">{{__('ادامه با نقش انتخابی')}}</flux:button>
 
 </div>

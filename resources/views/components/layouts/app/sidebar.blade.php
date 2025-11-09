@@ -4,44 +4,32 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
+
+    @php
+        use App\Models\Role;
+        $activeRole = Role::find(session('active_role_id'));
+    @endphp
+
+
         <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
             <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
                 <x-app-logo />
             </a>
-
             <flux:navlist variant="outline">
-                <flux:navlist.group :heading="__('سکوی توسعه')" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('داشبرد') }}</flux:navlist.item>
-                </flux:navlist.group>
-                <flux:navlist.group :heading="__('اطلاعات پایه')" class="grid" expandable :expanded="request()->routeIs(['roles', 'institutes', 'users', 'fields', 'standards'])" >
-                    <flux:navlist.item icon="user-group" :href="route('roles')" :current="request()->routeIs('roles')" wire:navigate>{{ __('نقشهای کاربری') }}</flux:navlist.item>
-                    <flux:navlist.item icon="user-group" :href="route('institutes')" :current="request()->routeIs('institutes')" wire:navigate>{{ __('آموزشگاهها') }}</flux:navlist.item>
-                    <flux:navlist.item icon="user-group" :href="route('users')" :current="request()->routeIs('users')" wire:navigate>{{ __('کاربران') }}</flux:navlist.item>
-
-                    <flux:navlist.item icon="user-group" :href="route('fields')" :current="request()->routeIs('fields')" wire:navigate>{{ __('رشته های آموزشی') }}</flux:navlist.item>
-                    <flux:navlist.item icon="user-group" :href="route('standards')" :current="request()->routeIs('standards')" wire:navigate>{{ __('استانداردهای آموزشی') }}</flux:navlist.item>
-
-                </flux:navlist.group>
-
-                <flux:navlist.group :heading="__('بانک سوال')" class="grid" expandable :expanded="request()->routeIs(['questions', 'create_question'])" >
-                    <flux:navlist.item icon="user-group" href="{{URL::signedRoute('questions', ['sid'=>0, 'cid'=>0] )}}" :current="request()->routeIs('questions')" wire:navigate>{{ __('کل سوالات') }}</flux:navlist.item>
-                    <flux:navlist.item icon="user-group" href="{{URL::signedRoute('create_question', ['sid'=>0, 'cid'=>0] )}}" :current="request()->routeIs('create_question')" wire:navigate>{{ __('درج سوال') }}</flux:navlist.item>
-                </flux:navlist.group>
+                @if ($activeRole)
+                    @includeIf('partials.sidebars.' . strtolower($activeRole->name_en))
+                @else
+                    <flux:navlist.group :heading="__('بدون نقش')" class="grid">
+                        <flux:navlist.item icon="alert-triangle">
+                            {{ __('هیچ نقشی انتخاب نشده است.') }}
+                        </flux:navlist.item>
+                    </flux:navlist.group>
+                @endif
             </flux:navlist>
 
             <flux:spacer />
-
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
 
             <!-- Desktop User Menu -->
             <flux:dropdown class="hidden lg:block" position="bottom" align="start">

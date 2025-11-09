@@ -33,7 +33,7 @@ class FortifyServiceProvider extends ServiceProvider
                         'active_role_id' => $role->role_id,
                         'active_institute_id' => $role->institute_id,
                     ]);
-                    return redirect()->route('dashboard');
+                    return redirect()->intended(config('fortify.home'));
                 }
                 // بیش از یک نقش → هدایت به انتخاب نقش
                 return redirect()->route('select_role');
