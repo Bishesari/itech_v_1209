@@ -13,6 +13,10 @@ class Question extends Model
     {
         return $this->belongsTo(Chapter::class);
     }
+    public function maker():BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_by');
+    }
     public function options():HasMany
     {
         return $this->hasMany(Option::class);

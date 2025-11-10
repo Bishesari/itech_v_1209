@@ -3,11 +3,11 @@
 use App\Models\Chapter;
 use App\Models\Question;
 use App\Models\Standard;
-use Flux\Flux;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Volt\Component;
 
 new class extends Component {
+
     public string $standard_id = '';
     public string $chapter_id = '';
 
@@ -41,15 +41,14 @@ new class extends Component {
     public function updatedStandardId($st_id): void
     {
         $this->standard_id = $st_id;
-        if ($st_id == 0){
+        if ($st_id == 0) {
             $this->standard_id = 0;
             $this->chapter_id = 0;
-        }else{
+        } else {
             $standard = Standard::find($st_id);
-            if ($standard->chapters()->exists()){
+            if ($standard->chapters()->exists()) {
                 $this->chapter_id = $standard->chapters()->value('id');
-            }
-            else{
+            } else {
                 $this->chapter_id = 0;
             }
         }
@@ -69,7 +68,7 @@ new class extends Component {
         <flux:select wire:model.live="standard_id" variant="listbox" placeholder="استانداردی انتخاب کنید ..."
                      searchable size="sm">
             <flux:select.option value="0">{{__('همه استانداردها')}}</flux:select.option>
-        @foreach (\App\Models\Standard::all() as $standard)
+            @foreach (\App\Models\Standard::all() as $standard)
                 <flux:select.option value="{{$standard->id}}">{{ $standard->name_fa }}</flux:select.option>
             @endforeach
         </flux:select>
@@ -85,7 +84,8 @@ new class extends Component {
         <div class="flex justify-between">
             <flux:button wire:click="filter" class="cursor-pointer" size="sm">{{__('فیلتر')}}</flux:button>
             <flux:button variant="ghost" size="sm" disabled>{{$questions->count()}} {{__('رکورد')}}</flux:button>
-            <flux:button href="{{URL::signedRoute('create_question', ['sid'=>$standard_id, 'cid'=>$chapter_id] )}}" variant="primary" color="sky" size="sm" class="cursor-pointer">{{__('جدید')}}</flux:button>
+            <flux:button href="{{URL::signedRoute('create_question', ['sid'=>$standard_id, 'cid'=>$chapter_id] )}}"
+                         variant="primary" color="sky" size="sm" class="cursor-pointer">{{__('جدید')}}</flux:button>
         </div>
     </div>
 
@@ -94,7 +94,7 @@ new class extends Component {
         <flux:callout color="zinc">
             <flux:callout.heading>#{{$question->id}} - {{$question->text}}</flux:callout.heading>
             <flux:text size="sm">{{__('فصل')}} {{$question->chapter->number}}
-                : {{$question->chapter->title}} {{__('از ')}}{{$question->chapter->standard->name_fa}}</flux:text>
+                : {{$question->chapter->title}} {{'( ' . $question->chapter->standard->name_fa . ' )'}} {{'( '. $question->maker->profile->l_name_fa . ' )'}}</flux:text>
         </flux:callout>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-1 mt-1 mb-6">
@@ -106,7 +106,8 @@ new class extends Component {
                     @php($var = 'secondary')
                     @php($icon = '')
                 @endif
-                    <flux:callout variant="{{$var}}" heading="{!! $option->text !!}" dir="{{$option->dir}}" icon='{{$icon}}' />
+                <flux:callout variant="{{$var}}" heading="{!! $option->text !!}" dir="{{$option->dir}}"
+                              icon='{{$icon}}'/>
             @endforeach
         </div>
     @endforeach
