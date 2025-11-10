@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Question extends Model
 {
-    protected $fillable = ['chapter_id', 'text', 'difficulty', 'is_final'];
+    protected $fillable = ['chapter_id', 'text', 'difficulty', 'is_final', 'assigned_by'];
     public function chapter():BelongsTo
     {
         return $this->belongsTo(Chapter::class);

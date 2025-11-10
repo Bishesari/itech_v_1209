@@ -3,6 +3,7 @@
 use App\Models\Option;
 use App\Models\Question;
 use Flux\Flux;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Livewire\Volt\Component;
 
@@ -40,6 +41,7 @@ new class extends Component {
             'text' => $this->text,
             'difficulty' => $this->difficulty,
             'is_final' => $this->is_final,
+            'assigned_by' => Auth::user()->id,
         ]);
 
         foreach ($this->options as $index => $text) {
@@ -113,7 +115,8 @@ new class extends Component {
         </div>
 
         <div class="flex justify-between">
-            <flux:button href="{{URL::signedRoute('questions', ['sid'=>$standard_id, 'cid'=>$chapter_id] )}}" variant="primary" color="zinc" wire:navigate
+            <flux:button href="{{URL::signedRoute('questions', ['sid'=>$standard_id, 'cid'=>$chapter_id] )}}"
+                         variant="primary" color="zinc" wire:navigate
                          size="sm" tabindex="-1">{{__('انصراف')}}</flux:button>
             <flux:field variant="inline">
                 <flux:checkbox wire:model="is_final"/>

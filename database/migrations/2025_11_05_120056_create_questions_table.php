@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('explanation')->nullable();
             $table->enum('difficulty', ['easy', 'medium', 'hard'])->default('medium'); // درجه سختی
             $table->boolean('is_final')->default(false);
+            $table->foreignId('assigned_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }
