@@ -19,7 +19,7 @@
             </a>
             <flux:navlist variant="outline">
                 @if ($activeRole)
-                    @includeIf('partials.sidebars.' . strtolower($activeRole->name_en))
+                    @includeIf('partials.sidebars.' . $activeRole->name_en)
                 @else
                     <flux:navlist.group :heading="__('بدون نقش')" class="grid">
                         <flux:navlist.item icon="alert-triangle">

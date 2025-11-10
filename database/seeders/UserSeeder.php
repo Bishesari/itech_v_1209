@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+
         $user = User::create([
             'user_name' => 'Yasser.Bishesari',
             'password' => '403Institute$#',
@@ -22,7 +23,7 @@ class UserSeeder extends Seeder
         InstituteRoleUser::create([
             'user_id' => $user->id,
             'role_id' => 2,
-            'assigned_by' => $user->id,
+            'assigned_by' => 1,
         ]);
 
         $user->profile()->create([
