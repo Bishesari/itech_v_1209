@@ -55,3 +55,5 @@ Volt::route('roles', 'role.index')->name('roles')->middleware('auth');
 Volt::route('role/{role}/show', 'role.show')->name('show_role')->middleware(['auth', 'signed']);
 
 Volt::route('payment/callback', 'payment.callback');
+
+Volt::route('exam/create', 'exam.create')->name('exam_create')->middleware(['auth']);

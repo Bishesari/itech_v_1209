@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
+            $table->string('title', 60);
             $table->foreignId('standard_id')->constrained()->cascadeOnDelete();
-            $table->enum('type', ['final', 'chapter_based'])->default('final');
             $table->integer('question_count')->default(40);
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
