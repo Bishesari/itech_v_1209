@@ -30,7 +30,16 @@ new class extends Component {
                 <flux:select.option value="{{$standard->id}}">{{ $standard->name_fa }}</flux:select.option>
             @endforeach
         </flux:select>
-        <flux:checkbox.group label="Subscription preferences" variant="cards" class="flex-col">
+        <flux:checkbox.group variant="cards" class="flex-col">
+            <div wire:loading class="text-amber-500 dark:text-amber-300"><flux:icon.loading /></div>
+            @if($chapters)
+                @if($chapters->count())
+                    <flux:text>{{__('فصلها را برای ایجاد آزمون انتخاب کنید...')}}</flux:text>
+                @else
+                    <flux:text>{{__('فصلی برای استاندارد تعریف نشده...')}}</flux:text>
+                @endif
+
+            @endif
             @foreach ($chapters as $chapter )
                 <flux:checkbox value="newsletter"
                                label="{{$chapter->number.' - '.$chapter->title}}"

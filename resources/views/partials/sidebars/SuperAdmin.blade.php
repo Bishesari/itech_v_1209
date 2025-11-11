@@ -11,7 +11,13 @@
     <flux:navlist.item icon="user-group" :href="route('standards')" :current="request()->routeIs('standards')" wire:navigate>{{ __('استانداردهای آموزشی') }}</flux:navlist.item>
 
 </flux:navlist.group>
+
+
 <flux:navlist.group :heading="__('بانک سوال')" class="grid" expandable :expanded="request()->routeIs(['questions', 'create_question'])" >
     <flux:navlist.item icon="user-group" href="{{URL::signedRoute('questions', ['sid'=>0, 'cid'=>0] )}}" :current="request()->routeIs('questions')" wire:navigate>{{ __('کل سوالات') }}</flux:navlist.item>
     <flux:navlist.item icon="user-group" href="{{URL::signedRoute('create_question', ['sid'=>0, 'cid'=>0] )}}" :current="request()->routeIs('create_question')" wire:navigate>{{ __('درج سوال') }}</flux:navlist.item>
+</flux:navlist.group>
+
+<flux:navlist.group :heading="__('آزمونها')" class="grid" expandable :expanded="request()->routeIs(['exam_create'])" >
+    <flux:navlist.item icon="user-group" href="{{route('exam_create')}}" :current="request()->routeIs('exam_create')" wire:navigate>{{ __('آزمون جدید') }}</flux:navlist.item>
 </flux:navlist.group>
