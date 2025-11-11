@@ -3,8 +3,6 @@
 use App\Models\Chapter;
 use App\Models\Question;
 use App\Models\Standard;
-use Illuminate\Database\Eloquent\Collection;
-use Livewire\Attributes\Computed;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
 
@@ -12,32 +10,13 @@ new class extends Component {
 
     use WithPagination;
 
-    public $standard_id = 0;
-    public $chapter_id = 0;
-    public $filterApplied = false;
+    public string $standard_id = '0';
+    public string $chapter_id = '0';
 
-    public $standards = [];
-    public $chapters = [];
-
-    public function mount()
+    public function mount($sid, $cid): void
     {
-        $this->standards = Standard::all();
-        $this->chapters = Chapter::all(); // برای شروع می‌تونی همه فصل‌ها رو نمایش بدی
-    }
-
-    public function updatedStandardId()
-    {
-        // وقتی استاندارد تغییر کرد، فصل‌ها ریست می‌شوند
-        $this->chapter_id = 0;
-
-        // اگر بخوای، می‌تونی فقط فصل‌های آن استاندارد را لود کنی:
-        $this->chapters = Chapter::where('standard_id', $this->standard_id)->get();
-    }
-
-    public function applyFilter()
-    {
-        $this->filterApplied = true;
-        $this->resetPage(); // بازگشت به صفحه 1 در pagination
+        $this->standard_id = $sid;
+        $this->chapter_id = $cid;
     }
 
     public function with(): array
@@ -45,17 +24,20 @@ new class extends Component {
         $query = Question::query();
 
         if ($this->standard_id != 0 && $this->chapter_id == 0) {
-            $query->where('standard_id', $this->standard_id);
+            $query = Standard::find($this->standard_id)->questions();
         }
         elseif ($this->standard_id != 0 && $this->chapter_id != 0) {
-            $query->where('standard_id', $this->standard_id)
-                ->where('chapter_id', $this->chapter_id);
+            $query = Chapter::find($this->chapter_id)->questions();
         }
-
 
         return [
             'questions' => $query->latest()->paginate(10),
         ];
+    }
+
+    public function updatedStandardId(): void
+    {
+        $this->chapter_id = 0;
     }
 
 
@@ -68,38 +50,31 @@ new class extends Component {
     </div>
 
 
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 mb-3">
+        <!-- Standard select menu... -->
+        <flux:select wire:model.live="standard_id" variant="listbox" placeholder="استانداردی انتخاب کنید ..."
+                     searchable size="sm">
+            <flux:select.option value="0">{{__('همه استانداردها')}}</flux:select.option>
+            @foreach (\App\Models\Standard::all() as $standard)
+                <flux:select.option value="{{$standard->id}}">{{ $standard->name_fa }}</flux:select.option>
+            @endforeach
+        </flux:select>
 
-    {{-- فیلترها --}}
-    <div class="flex gap-4 items-end">
-        {{-- استاندارد --}}
-        <div>
-            <label class="block mb-1 text-sm font-medium">استاندارد</label>
-            <select wire:model="standard_id" class="border rounded p-2">
-                <option value="0">همه استانداردها</option>
-                @foreach($standards as $standard)
-                    <option value="{{ $standard->id }}">{{ $standard->name }}</option>
-                @endforeach
-            </select>
+        <!-- Chapter select menu... -->
+        <flux:select wire:model.live="chapter_id" wire:key="{{ $standard_id }}" variant="listbox"
+                     placeholder="سرفصل را انتخاب کنید ..." size="sm">
+            <flux:select.option value="0">{{__('همه فصلها')}}</flux:select.option>
+            @foreach (\App\Models\Chapter::whereStandardId($standard_id)->get() as $chapter)
+                <flux:select.option value="{{$chapter->id}}">{{ $chapter->title }}</flux:select.option>
+            @endforeach
+        </flux:select>
+        <div class="flex justify-between">
+            <flux:button variant="ghost" size="sm" disabled>{{$questions->total()}} {{__('رکورد')}}</flux:button>
+            <div wire:loading class="text-amber-500 dark:text-amber-300"><flux:icon.loading /></div>
+            <flux:button href="{{URL::signedRoute('create_question', ['sid'=>$standard_id, 'cid'=>$chapter_id] )}}"
+                         variant="primary" color="sky" size="sm" class="cursor-pointer">{{__('جدید')}}</flux:button>
         </div>
-
-        {{-- فصل --}}
-        <div>
-            <label class="block mb-1 text-sm font-medium">فصل</label>
-            <select wire:model="chapter_id" class="border rounded p-2">
-                <option value="0">همه فصل‌ها</option>
-                @foreach($chapters as $chapter)
-                    <option value="{{ $chapter->id }}">{{ $chapter->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        {{-- دکمه فیلتر --}}
-        <button wire:click="applyFilter" class="bg-blue-600 text-white px-4 py-2 rounded">
-            فیلتر
-        </button>
     </div>
-
-
 
     @foreach($questions as $question)
         <flux:callout color="zinc">
@@ -122,5 +97,6 @@ new class extends Component {
             @endforeach
         </div>
     @endforeach
+    <flux:pagination :paginator="$questions" />
 
 </section>

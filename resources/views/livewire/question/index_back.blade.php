@@ -74,7 +74,7 @@ new class extends Component {
         </flux:select>
 
         <!-- Chapter select menu... -->
-        <flux:select wire:model.live="chapter_id" wire:key="{{ $standard_id }}" variant="listbox"
+        <flux:select wire:model.live="chapter_id" wire:key="{{ $chapter_id }}" variant="listbox"
                      placeholder="سرفصل را انتخاب کنید ..." size="sm">
             <flux:select.option value="0">{{__('همه فصلها')}}</flux:select.option>
             @foreach (\App\Models\Chapter::whereStandardId($standard_id)->get() as $chapter)
