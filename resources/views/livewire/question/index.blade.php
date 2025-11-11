@@ -31,7 +31,7 @@ new class extends Component {
         }
 
         return [
-            'questions' => $query->latest()->paginate(10),
+            'questions' => $query->latest()->paginate(5),
         ];
     }
 
@@ -77,10 +77,17 @@ new class extends Component {
     </div>
 
     @foreach($questions as $question)
-        <flux:callout color="zinc">
-            <flux:callout.heading>#{{$question->id}} - {{$question->text}}</flux:callout.heading>
+        <flux:callout color="zinc" inline>
+            <flux:callout.heading>#{{$question->id}} - {{$question->text}} <span class="text-xs text-green-500">@if($question->is_final) {{__('(پرتکرار نهایی)')}} @endif</span></flux:callout.heading>
             <flux:text size="sm">{{__('فصل')}} {{$question->chapter->number}}
                 : {{$question->chapter->title}} {{'( ' . $question->chapter->standard->name_fa . ' )'}} {{'( '. $question->maker->profile->l_name_fa . ' )'}}</flux:text>
+
+            <x-slot name="actions">
+                <flux:button variant="subtle" href="{{URL::signedRoute('edit_question', ['question'=>$question] )}}" size="xs">
+                    {{__('ویرایش')}}
+                </flux:button>
+            </x-slot>
+
         </flux:callout>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-1 mt-1 mb-6">

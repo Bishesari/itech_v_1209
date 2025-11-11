@@ -43,6 +43,7 @@ Volt::route('standard/{standard}/chapters', 'standard.chapter.crud')->name('chap
 
 Volt::route('question/{sid}/{cid}/index', 'question.index')->name('questions')->middleware(['auth', 'signed']);
 Volt::route('question/{sid}/{cid}/create', 'question.create')->name('create_question')->middleware(['auth', 'signed']);
+Volt::route('question/{question}/edit', 'question.edit')->name('edit_question')->middleware(['auth', 'signed']);
 
 Volt::route('users', 'user.index')->name('users')->middleware('auth');
 Volt::route('user/{user}/show', 'user.show')->name('show_user')->middleware(['auth', 'signed']);
