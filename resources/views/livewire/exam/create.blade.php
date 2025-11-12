@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\Exam;
+use App\Models\Question;
 use App\Models\Standard;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -12,7 +15,11 @@ new class extends Component {
     public int $total_questions = 0;
 
     public string $title = '';
-    public string $date;
+    public string $question_count = '';
+    public string $st_date;
+    public string $st_time;
+    public string $en_date;
+    public string $en_time;
 
 
     public function mount(): void
@@ -36,6 +43,29 @@ new class extends Component {
     }
 
 
+    public function add_exam()
+    {
+        $exam = Exam::create([
+                'standard_id' => $this->standard_id,
+                'title' => $this->title,
+                'question_count' => $this->question_count,
+                'start_date' => Carbon::parse("{$this->st_date} {$this->st_time}"),
+                'end_date' => Carbon::parse("{$this->en_date} {$this->en_time}"),
+            ]
+        );
+
+        $questionIds = Question::whereIn('chapter_id', $this->selected_chapters)
+            ->where('is_final', true)
+            ->pluck('id')
+            ->shuffle()
+            ->take($this->question_count)
+            ->toArray();
+
+        $exam->questions()->sync($questionIds);
+
+    }
+
+
 }; ?>
 
 <section class="w-full">
@@ -55,7 +85,8 @@ new class extends Component {
             @endforeach
         </flux:select>
 
-        <flux:checkbox.group wire:model.live="selected_chapters" variant="cards" class="flex-col" wire:key="{{ $standard_id }}">
+        <flux:checkbox.group wire:model.live="selected_chapters" variant="cards" class="flex-col"
+                             wire:key="{{ $standard_id }}">
             <div wire:loading wire:target="standard_id" class="text-amber-500 dark:text-amber-300">
                 <flux:icon.loading/>
             </div>
@@ -84,19 +115,34 @@ new class extends Component {
 
         @if($standard_id and $chapters->isNotEmpty())
             <flux:input wire:model="title" label="عنوان آزمون" type="text" class:input="text-center" required/>
+            <flux:input wire:model="question_count" label="تعداد سوالهای این آزمون"
+                        badge="{{__('تعداد انتخاب شده: ') . $total_questions}}" type="text" class:input="text-center"
+                        required/>
 
-            <div class="flex space-x-3">
-                <flux:date-picker locale="fa-IR" wire:model="date" with-today/>
-            </div>
+            <flux:field>
+                <flux:label>{{__('تاریخ و زمان شروع')}}</flux:label>
+                <div class="grid grid-cols-2 space-x-3" dir="ltr">
+                    <flux:date-picker locale="fa-IR" wire:model="st_date" with-today selectable-header/>
+                    <flux:time-picker wire:model="st_time" type="input" :dropdown="false"/>
+                </div>
+            </flux:field>
+
+            <flux:field>
+                <flux:label>{{__('تاریخ و زمان پایان')}}</flux:label>
+                <div class="grid grid-cols-2 space-x-3" dir="ltr">
+                    <flux:date-picker locale="fa-IR" wire:model="en_date" with-today selectable-header/>
+                    <flux:time-picker wire:model="en_time" type="input" :dropdown="false"/>
+                </div>
+            </flux:field>
+
 
             <div class="flex justify-between flex-row-reverse">
                 <flux:button type="submit" variant="primary" color="sky" size="sm"
                              class="cursor-pointer">{{__('ذخیره')}}</flux:button>
-                <flux:badge color="yellow">{{__('انتخاب شده: ') . $total_questions}}</flux:badge>
                 <flux:button href="{{route('exam_create')}}" variant="primary" color="zinc" wire:navigate
                              size="sm">{{__('انصراف')}}</flux:button>
             </div>
         @endif
     </form>
-    <input wire:model="date">
+    <input wire:model="st_time">
 </section>

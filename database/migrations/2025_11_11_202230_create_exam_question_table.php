@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('exam_id')->constrained()->cascadeOnDelete();
             $table->foreignId('question_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
+            $table->unique(['exam_id', 'question_id']); // جلوگیری از ثبت تکراری یک سوال در آزمون
         });
     }
 
