@@ -22,6 +22,12 @@
                         >
                             Dashboard
                         </a>
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            @csrf
+                            <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full" data-test="logout-button">
+                                {{ __('خروج') }}
+                            </flux:menu.item>
+                        </form>
                     @else
                         <a
                             href="{{ route('login') }}"

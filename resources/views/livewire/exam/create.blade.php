@@ -55,12 +55,10 @@ new class extends Component {
         );
 
         $questionIds = Question::whereIn('chapter_id', $this->selected_chapters)
-            ->where('is_final', true)
             ->pluck('id')
             ->shuffle()
             ->take($this->question_count)
             ->toArray();
-
         $exam->questions()->sync($questionIds);
 
     }
@@ -105,10 +103,10 @@ new class extends Component {
                     />
                 @else
                     <flux:checkbox
-                        value="{{ $chapter->id }}"
                         label="{{ $chapter->number.' - '.$chapter->title }}"
                         description="(بدون سؤال)" disabled
                     />
+
                 @endif
             @endforeach
         </flux:checkbox.group>
@@ -144,5 +142,4 @@ new class extends Component {
             </div>
         @endif
     </form>
-    <input wire:model="st_time">
 </section>

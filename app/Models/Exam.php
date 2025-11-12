@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Exam extends Model
@@ -12,6 +13,12 @@ class Exam extends Model
     public function questions():BelongsToMany
     {
         return $this->belongsToMany(Question::class, 'exam_question')->withTimestamps();
+    }
+
+    public function standard():BelongsTo
+    {
+        return $this->belongsTo(Standard::class);
+
     }
 
 }
