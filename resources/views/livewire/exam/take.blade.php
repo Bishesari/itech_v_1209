@@ -37,8 +37,13 @@ new class extends Component {
         $this->current_index = $index;
     }
 
-    public function submitAnswer(): void
+    public function submitAnswer()
     {
+        if (!is_null($this->examUser->finished_at))
+        {
+            // هدایت به صفحه نتایج
+            return redirect()->route('exam.result', ['examUser' => $this->examUser->id]);
+        }
 
         if (!is_null($this->selectedOption)) {
             // ذخیره پاسخ
@@ -63,11 +68,16 @@ new class extends Component {
         } else {
             $this->goToQuestion($this->current_index + 1);
         }
-
     }
 
     public function finishExam()
     {
+        if (!is_null($this->examUser->finished_at))
+        {
+            // هدایت به صفحه نتایج
+            return redirect()->route('exam.result', ['examUser' => $this->examUser->id]);
+        }
+
         $answered = $this->examUser->answers()->where('is_correct', true)->count();
         $total = count($this->questionIds);
 
@@ -85,14 +95,13 @@ new class extends Component {
 }; ?>
 
 <section class="w-full">
-    <input type="text" wire:model="user_answered_count">
     <div class="mb-2">
         <flux:heading size="xl" level="1">{{$examUser->exam->standard->name_fa}}</flux:heading>
         <flux:text color="blue" size="lg" class="my-2">{{$examUser->exam->title}}</flux:text>
         <flux:separator variant="subtle"/>
     </div>
 
-    <div class="flex flex-wrap gap-2 justify-evenly">
+    <div class="flex flex-wrap gap-2 justify-evenly mb-2">
         @foreach($questionIds as $i => $questionId)
             @php
                 $isCurrent = $currentQuestion && $currentQuestion->id === $questionId;
@@ -122,24 +131,36 @@ new class extends Component {
             <button
         @endforeach
     </div>
+    <flux:separator variant="subtle"/>
 
-    <div class="mt-3">
-        <flux:callout color="zinc" inline>
-            <flux:callout.heading>#{{$currentQuestion->id}} - {{$currentQuestion->text}}</flux:callout.heading>
-        </flux:callout>
 
-        <flux:radio.group wire:model="selectedOption" variant="cards" class="max-sm:flex-col my-2">
-            @foreach($currentQuestion->options as $option)
-                <flux:radio value="{{ $option->id }}" label="{!! $option->text !!}"
-                            wire:key="option-{{ $option->id }}" class="cursor-pointer"/>
-            @endforeach
-        </flux:radio.group>
-        <div class="flex justify-center flex-row">
-            <flux:button wire:click="submitAnswer" class="cursor-pointer">{{__('ثبت پاسخ و سوال بعدی')}} {{__('->')}}</flux:button>
-            @if($user_answered_count == count($questionIds))
-                <flux:button variant="primary" color="green" wire:click="finishExam" class="cursor-pointer mr-5">{{__('ثبت پایان آزمون')}}</flux:button>
-            @endif
+    <div class="flex justify-center mt-10">
+        <flux:card class="w-[400px] pb-0 relative">
+            <flux:heading size="lg" class="text-center mb-3 leading-7">
+                {{$current_index + 1}} - {{$currentQuestion->text}}
+            </flux:heading>
 
-        </div>
+            <flux:radio.group wire:model="selectedOption" variant="cards" class="flex-col mb-3">
+                @foreach($currentQuestion->options as $option)
+                    <flux:radio value="{{ $option->id }}" label="{!! $option->text !!}"
+                                wire:key="option-{{ $option->id }}" class="cursor-pointer" dir="{{$option->dir}}" />
+                @endforeach
+            </flux:radio.group>
+
+            <div class="flex justify-between flex-row mb-2">
+                <flux:button size="sm" variant="ghost" icon="arrow-left-end-on-rectangle" wire:click="submitAnswer" class="cursor-pointer" dir="ltr">{{__('ثبت پاسخ، برو بعدی')}}</flux:button>
+                @if($user_answered_count == count($questionIds))
+                    <flux:button variant="primary" color="emerald" size="sm" icon="inbox-arrow-down" wire:click="finishExam" class="cursor-pointer" dir="ltr">{{__('پایان آزمون')}}</flux:button>
+                @endif
+
+            </div>
+
+            <flux:separator variant="subtle" class="mb-2"/>
+            <div class="flex justify-between mb-2">
+                <flux:text variant="subtle" class="font-thin"> {{__('#')}} {{$currentQuestion->id}}</flux:text>
+                <flux:text variant="subtle" class="font-thin"> {{__('ثبت شده:')}} {{$user_answered_count}}</flux:text>
+            </div>
+        </flux:card>
     </div>
+
 </section>
