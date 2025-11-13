@@ -1,31 +1,22 @@
-<?php
-
-/* In the name of Allah = بسم اللّه الرّحمن الرّحیم */
+<?php /* In the name of Allah = بسم اللّه الرّحمن الرّحیم */
 
 /**
  * @فارسی : توابع زمان و تاریخ هجری شمسی (جلالی) در پی اچ پی
- *
  * @name: Hijri_Shamsi,Solar(Jalali) Date and Time Functions
- *
  * @Author : Reza Gholampanahi & WebSite : http://jdf.scr.ir
- *
  * @License: GNU/LGPL _ Open Source & Free : [all functions]
- *
  * @Version: 2.76 =>[ 1399/11/28 = 1442/07/04 = 2021/02/16 ]
  */
 
 /*	F	*/
-function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran', $tr_num = 'fa')
-{
+function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran', $tr_num = 'fa') {
 
-    $T_sec = 0; /* <= رفع خطاي زمان سرور ، با اعداد '+' و '-' بر حسب ثانيه */
+    $T_sec = 0;/* <= رفع خطاي زمان سرور ، با اعداد '+' و '-' بر حسب ثانيه */
 
-    if ($time_zone != 'local') {
-        date_default_timezone_set(($time_zone === '') ? 'Asia/Tehran' : $time_zone);
-    }
+    if ($time_zone != 'local') date_default_timezone_set(($time_zone === '') ? 'Asia/Tehran' : $time_zone);
     $ts = $T_sec + (($timestamp === '') ? time() : tr_num($timestamp));
     $date = explode('_', date('H_i_j_n_O_P_s_w_Y', $ts));
-    [$j_y, $j_m, $j_d] = gregorian_to_jalali($date[8], $date[3], $date[2]);
+    list($j_y, $j_m, $j_d) = gregorian_to_jalali($date[8], $date[3], $date[2]);
     $doy = ($j_m < 7) ? (($j_m - 1) * 31) + $j_d - 1 : (($j_m - 7) * 30) + $j_d + 185;
     $kab = (((($j_y + 12) % 33) % 4) == 1) ? 1 : 0;
     $sl = strlen($format);
@@ -34,7 +25,6 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
         $sub = substr($format, $i, 1);
         if ($sub == '\\') {
             $out .= substr($format, ++$i, 1);
-
             continue;
         }
         switch ($sub) {
@@ -71,7 +61,7 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                 break;
 
             case 'c':
-                $out .= $j_y.'/'.$j_m.'/'.$j_d.' ،'.$date[0].':'.$date[1].':'.$date[6].' '.$date[5];
+                $out .= $j_y . '/' . $j_m . '/' . $j_d . ' ،' . $date[0] . ':' . $date[1] . ':' . $date[6] . ' ' . $date[5];
                 break;
 
             case 'C':
@@ -79,19 +69,19 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                 break;
 
             case 'd':
-                $out .= ($j_d < 10) ? '0'.$j_d : $j_d;
+                $out .= ($j_d < 10) ? '0' . $j_d : $j_d;
                 break;
 
             case 'D':
-                $out .= jdate_words(['kh' => $date[7]], ' ');
+                $out .= jdate_words(array('kh' => $date[7]), ' ');
                 break;
 
             case 'f':
-                $out .= jdate_words(['ff' => $j_m], ' ');
+                $out .= jdate_words(array('ff' => $j_m), ' ');
                 break;
 
             case 'F':
-                $out .= jdate_words(['mm' => $j_m], ' ');
+                $out .= jdate_words(array('mm' => $j_m), ' ');
                 break;
 
             case 'H':
@@ -107,10 +97,10 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                 break;
 
             case 'J':
-                $out .= jdate_words(['rr' => $j_d], ' ');
+                $out .= jdate_words(array('rr' => $j_d), ' ');
                 break;
 
-            case 'k':
+            case 'k';
                 $out .= tr_num(100 - (int) ($doy / ($kab + 365.24) * 1000) / 10, $tr_num);
                 break;
 
@@ -119,7 +109,7 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                 break;
 
             case 'l':
-                $out .= jdate_words(['rh' => $date[7]], ' ');
+                $out .= jdate_words(array('rh' => $date[7]), ' ');
                 break;
 
             case 'L':
@@ -127,11 +117,11 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                 break;
 
             case 'm':
-                $out .= ($j_m > 9) ? $j_m : '0'.$j_m;
+                $out .= ($j_m > 9) ? $j_m : '0' . $j_m;
                 break;
 
             case 'M':
-                $out .= jdate_words(['km' => $j_m], ' ');
+                $out .= jdate_words(array('km' => $j_m), ' ');
                 break;
 
             case 'n':
@@ -153,7 +143,7 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                 break;
 
             case 'p':
-                $out .= jdate_words(['mb' => $j_m], ' ');
+                $out .= jdate_words(array('mb' => $j_m), ' ');
                 break;
 
             case 'P':
@@ -161,7 +151,7 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                 break;
 
             case 'q':
-                $out .= jdate_words(['sh' => $j_y], ' ');
+                $out .= jdate_words(array('sh' => $j_y), ' ');
                 break;
 
             case 'Q':
@@ -169,8 +159,8 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                 break;
 
             case 'r':
-                $key = jdate_words(['rh' => $date[7], 'mm' => $j_m]);
-                $out .= $date[0].':'.$date[1].':'.$date[6].' '.$date[4].' '.$key['rh'].'، '.$j_d.' '.$key['mm'].' '.$j_y;
+                $key = jdate_words(array('rh' => $date[7], 'mm' => $j_m));
+                $out .= $date[0] . ':' . $date[1] . ':' . $date[6] . ' ' . $date[4] . ' ' . $key['rh'] . '، ' . $j_d . ' ' . $key['mm'] . ' ' . $j_y;
                 break;
 
             case 's':
@@ -190,11 +180,11 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                 break;
 
             case 'v':
-                $out .= jdate_words(['ss' => ($j_y % 100)], ' ');
+                $out .= jdate_words(array('ss' => ($j_y % 100)), ' ');
                 break;
 
             case 'V':
-                $out .= jdate_words(['ss' => $j_y], ' ');
+                $out .= jdate_words(array('ss' => $j_y), ' ');
                 break;
 
             case 'w':
@@ -203,9 +193,7 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
 
             case 'W':
                 $avs = (($date[7] == 6) ? 0 : $date[7] + 1) - ($doy % 7);
-                if ($avs < 0) {
-                    $avs += 7;
-                }
+                if ($avs < 0) $avs += 7;
                 $num = (int) (($doy + $avs) / 7);
                 if ($avs < 4) {
                     $num++;
@@ -213,10 +201,8 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                     $num = ($avs == 4 or $avs == ((((($j_y % 33) % 4) - 2) == ((int) (($j_y % 33) * 0.05))) ? 5 : 4)) ? 53 : 52;
                 }
                 $aks = $avs + $kab;
-                if ($aks == 7) {
-                    $aks = 0;
-                }
-                $out .= (($kab + 363 - $doy) < $aks and $aks < 3) ? '01' : (($num < 10) ? '0'.$num : $num);
+                if ($aks == 7) $aks = 0;
+                $out .= (($kab + 363 - $doy) < $aks and $aks < 3) ? '01' : (($num < 10) ? '0' . $num : $num);
                 break;
 
             case 'y':
@@ -235,22 +221,18 @@ function jdate($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran',
                 $out .= $sub;
         }
     }
-
     return ($tr_num != 'en') ? tr_num($out, 'fa', '.') : $out;
 }
 
 /*	F	*/
-function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran', $tr_num = 'fa')
-{
+function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehran', $tr_num = 'fa') {
 
-    $T_sec = 0; /* <= رفع خطاي زمان سرور ، با اعداد '+' و '-' بر حسب ثانيه */
+    $T_sec = 0;/* <= رفع خطاي زمان سرور ، با اعداد '+' و '-' بر حسب ثانيه */
 
-    if ($time_zone != 'local') {
-        date_default_timezone_set(($time_zone === '') ? 'Asia/Tehran' : $time_zone);
-    }
+    if ($time_zone != 'local') date_default_timezone_set(($time_zone === '') ? 'Asia/Tehran' : $time_zone);
     $ts = $T_sec + (($timestamp === '') ? time() : tr_num($timestamp));
     $date = explode('_', date('h_H_i_j_n_s_w_Y', $ts));
-    [$j_y, $j_m, $j_d] = gregorian_to_jalali($date[7], $date[4], $date[3]);
+    list($j_y, $j_m, $j_d) = gregorian_to_jalali($date[7], $date[4], $date[3]);
     $doy = ($j_m < 7) ? (($j_m - 1) * 31) + $j_d - 1 : (($j_m - 7) * 30) + $j_d + 185;
     $kab = (((($j_y + 12) % 33) % 4) == 1) ? 1 : 0;
     $sl = strlen($format);
@@ -261,26 +243,25 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
             $sub = substr($format, ++$i, 1);
         } else {
             $out .= $sub;
-
             continue;
         }
         switch ($sub) {
 
             /* Day */
             case 'a':
-                $out .= jdate_words(['kh' => $date[6]], ' ');
+                $out .= jdate_words(array('kh' => $date[6]), ' ');
                 break;
 
             case 'A':
-                $out .= jdate_words(['rh' => $date[6]], ' ');
+                $out .= jdate_words(array('rh' => $date[6]), ' ');
                 break;
 
             case 'd':
-                $out .= ($j_d < 10) ? '0'.$j_d : $j_d;
+                $out .= ($j_d < 10) ? '0' . $j_d : $j_d;
                 break;
 
             case 'e':
-                $out .= ($j_d < 10) ? ' '.$j_d : $j_d;
+                $out .= ($j_d < 10) ? ' ' . $j_d : $j_d;
                 break;
 
             case 'j':
@@ -295,24 +276,18 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 $out .= ($date[6] == 6) ? 0 : $date[6] + 1;
                 break;
 
-                /* Week */
+            /* Week */
             case 'U':
                 $avs = (($date[6] < 5) ? $date[6] + 2 : $date[6] - 5) - ($doy % 7);
-                if ($avs < 0) {
-                    $avs += 7;
-                }
+                if ($avs < 0) $avs += 7;
                 $num = (int) (($doy + $avs) / 7) + 1;
-                if ($avs > 3 or $avs == 1) {
-                    $num--;
-                }
-                $out .= ($num < 10) ? '0'.$num : $num;
+                if ($avs > 3 or $avs == 1) $num--;
+                $out .= ($num < 10) ? '0' . $num : $num;
                 break;
 
             case 'V':
                 $avs = (($date[6] == 6) ? 0 : $date[6] + 1) - ($doy % 7);
-                if ($avs < 0) {
-                    $avs += 7;
-                }
+                if ($avs < 0) $avs += 7;
                 $num = (int) (($doy + $avs) / 7);
                 if ($avs < 4) {
                     $num++;
@@ -320,42 +295,36 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                     $num = ($avs == 4 or $avs == ((((($j_y % 33) % 4) - 2) == ((int) (($j_y % 33) * 0.05))) ? 5 : 4)) ? 53 : 52;
                 }
                 $aks = $avs + $kab;
-                if ($aks == 7) {
-                    $aks = 0;
-                }
-                $out .= (($kab + 363 - $doy) < $aks and $aks < 3) ? '01' : (($num < 10) ? '0'.$num : $num);
+                if ($aks == 7) $aks = 0;
+                $out .= (($kab + 363 - $doy) < $aks and $aks < 3) ? '01' : (($num < 10) ? '0' . $num : $num);
                 break;
 
             case 'W':
                 $avs = (($date[6] == 6) ? 0 : $date[6] + 1) - ($doy % 7);
-                if ($avs < 0) {
-                    $avs += 7;
-                }
+                if ($avs < 0) $avs += 7;
                 $num = (int) (($doy + $avs) / 7) + 1;
-                if ($avs > 3) {
-                    $num--;
-                }
-                $out .= ($num < 10) ? '0'.$num : $num;
+                if ($avs > 3) $num--;
+                $out .= ($num < 10) ? '0' . $num : $num;
                 break;
 
-                /* Month */
+            /* Month */
             case 'b':
             case 'h':
-                $out .= jdate_words(['km' => $j_m], ' ');
+                $out .= jdate_words(array('km' => $j_m), ' ');
                 break;
 
             case 'B':
-                $out .= jdate_words(['mm' => $j_m], ' ');
+                $out .= jdate_words(array('mm' => $j_m), ' ');
                 break;
 
             case 'm':
-                $out .= ($j_m > 9) ? $j_m : '0'.$j_m;
+                $out .= ($j_m > 9) ? $j_m : '0' . $j_m;
                 break;
 
-                /* Year */
+            /* Year */
             case 'C':
                 $tmp = (int) ($j_y / 100);
-                $out .= ($tmp > 9) ? $tmp : '0'.$tmp;
+                $out .= ($tmp > 9) ? $tmp : '0' . $tmp;
                 break;
 
             case 'g':
@@ -378,7 +347,7 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 $out .= $j_y;
                 break;
 
-                /* Time */
+            /* Time */
             case 'H':
                 $out .= $date[1];
                 break;
@@ -388,7 +357,7 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 break;
 
             case 'l':
-                $out .= ($date[0] > 9) ? $date[0] : ' '.(int) $date[0];
+                $out .= ($date[0] > 9) ? $date[0] : ' ' . (int) $date[0];
                 break;
 
             case 'M':
@@ -404,11 +373,11 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 break;
 
             case 'r':
-                $out .= $date[0].':'.$date[2].':'.$date[5].' '.(($date[1] < 12) ? 'قبل از ظهر' : 'بعد از ظهر');
+                $out .= $date[0] . ':' . $date[2] . ':' . $date[5] . ' ' . (($date[1] < 12) ? 'قبل از ظهر' : 'بعد از ظهر');
                 break;
 
             case 'R':
-                $out .= $date[1].':'.$date[2];
+                $out .= $date[1] . ':' . $date[2];
                 break;
 
             case 'S':
@@ -416,11 +385,11 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 break;
 
             case 'T':
-                $out .= $date[1].':'.$date[2].':'.$date[5];
+                $out .= $date[1] . ':' . $date[2] . ':' . $date[5];
                 break;
 
             case 'X':
-                $out .= $date[0].':'.$date[2].':'.$date[5];
+                $out .= $date[0] . ':' . $date[2] . ':' . $date[5];
                 break;
 
             case 'z':
@@ -431,18 +400,18 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 $out .= date('T', $ts);
                 break;
 
-                /* Time and Date Stamps */
+            /* Time and Date Stamps */
             case 'c':
-                $key = jdate_words(['rh' => $date[6], 'mm' => $j_m]);
-                $out .= $date[1].':'.$date[2].':'.$date[5].' '.date('P', $ts).' '.$key['rh'].'، '.$j_d.' '.$key['mm'].' '.$j_y;
+                $key = jdate_words(array('rh' => $date[6], 'mm' => $j_m));
+                $out .= $date[1] . ':' . $date[2] . ':' . $date[5] . ' ' . date('P', $ts) . ' ' . $key['rh'] . '، ' . $j_d . ' ' . $key['mm'] . ' ' . $j_y;
                 break;
 
             case 'D':
-                $out .= substr($j_y, 2, 2).'/'.(($j_m > 9) ? $j_m : '0'.$j_m).'/'.(($j_d < 10) ? '0'.$j_d : $j_d);
+                $out .= substr($j_y, 2, 2) . '/' . (($j_m > 9) ? $j_m : '0' . $j_m) . '/' . (($j_d < 10) ? '0' . $j_d : $j_d);
                 break;
 
             case 'F':
-                $out .= $j_y.'-'.(($j_m > 9) ? $j_m : '0'.$j_m).'-'.(($j_d < 10) ? '0'.$j_d : $j_d);
+                $out .= $j_y . '-' . (($j_m > 9) ? $j_m : '0' . $j_m) . '-' . (($j_d < 10) ? '0' . $j_d : $j_d);
                 break;
 
             case 's':
@@ -450,10 +419,10 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 break;
 
             case 'x':
-                $out .= substr($j_y, 2, 2).'/'.(($j_m > 9) ? $j_m : '0'.$j_m).'/'.(($j_d < 10) ? '0'.$j_d : $j_d);
+                $out .= substr($j_y, 2, 2) . '/' . (($j_m > 9) ? $j_m : '0' . $j_m) . '/' . (($j_d < 10) ? '0' . $j_d : $j_d);
                 break;
 
-                /* Miscellaneous */
+            /* Miscellaneous */
             case 'n':
                 $out .= "\n";
                 break;
@@ -470,20 +439,16 @@ function jstrftime($format, $timestamp = '', $none = '', $time_zone = 'Asia/Tehr
                 $out .= $sub;
         }
     }
-
     return ($tr_num != 'en') ? tr_num($out, 'fa', '.') : $out;
 }
 
 /*	F	*/
-function jmktime($h = '', $m = '', $s = '', $jm = '', $jd = '', $jy = '', $none = '', $timezone = 'Asia/Tehran')
-{
-    if ($timezone != 'local') {
-        date_default_timezone_set($timezone);
-    }
+function jmktime($h = '', $m = '', $s = '', $jm = '', $jd = '', $jy = '', $none = '', $timezone = 'Asia/Tehran') {
+    if ($timezone != 'local') date_default_timezone_set($timezone);
     if ($h === '') {
         return time();
     } else {
-        [$h, $m, $s, $jm, $jd, $jy] = explode('_', tr_num($h.'_'.$m.'_'.$s.'_'.$jm.'_'.$jd.'_'.$jy));
+        list($h, $m, $s, $jm, $jd, $jy) = explode('_', tr_num($h . '_' . $m . '_' . $s . '_' . $jm . '_' . $jd . '_' . $jy));
         if ($m === '') {
             return mktime($h);
         } else {
@@ -495,17 +460,14 @@ function jmktime($h = '', $m = '', $s = '', $jm = '', $jd = '', $jy = '', $none 
                 } else {
                     $jdate = explode('_', jdate('Y_j', '', '', $timezone, 'en'));
                     if ($jd === '') {
-                        [$gy, $gm, $gd] = jalali_to_gregorian($jdate[0], $jm, $jdate[1]);
-
+                        list($gy, $gm, $gd) = jalali_to_gregorian($jdate[0], $jm, $jdate[1]);
                         return mktime($h, $m, $s, $gm);
                     } else {
                         if ($jy === '') {
-                            [$gy, $gm, $gd] = jalali_to_gregorian($jdate[0], $jm, $jd);
-
+                            list($gy, $gm, $gd) = jalali_to_gregorian($jdate[0], $jm, $jd);
                             return mktime($h, $m, $s, $gm, $gd);
                         } else {
-                            [$gy, $gm, $gd] = jalali_to_gregorian($jy, $jm, $jd);
-
+                            list($gy, $gm, $gd) = jalali_to_gregorian($jy, $jm, $jd);
                             return mktime($h, $m, $s, $gm, $gd, $gy);
                         }
                     }
@@ -516,12 +478,10 @@ function jmktime($h = '', $m = '', $s = '', $jm = '', $jd = '', $jy = '', $none 
 }
 
 /*	F	*/
-function jgetdate($timestamp = '', $none = '', $timezone = 'Asia/Tehran', $tn = 'en')
-{
+function jgetdate($timestamp = '', $none = '', $timezone = 'Asia/Tehran', $tn = 'en') {
     $ts = ($timestamp === '') ? time() : tr_num($timestamp);
     $jdate = explode('_', jdate('F_G_i_j_l_n_s_w_Y_z', $ts, '', $timezone, $tn));
-
-    return [
+    return array(
         'seconds' => tr_num((int) tr_num($jdate[6]), $tn),
         'minutes' => tr_num((int) tr_num($jdate[2]), $tn),
         'hours' => $jdate[1],
@@ -532,31 +492,26 @@ function jgetdate($timestamp = '', $none = '', $timezone = 'Asia/Tehran', $tn = 
         'yday' => $jdate[9],
         'weekday' => $jdate[4],
         'month' => $jdate[0],
-        0 => tr_num($ts, $tn),
-    ];
+        0 => tr_num($ts, $tn)
+    );
 }
 
 /*	F	*/
-function jcheckdate($jm, $jd, $jy)
-{
-    [$jm, $jd, $jy] = explode('_', tr_num($jm.'_'.$jd.'_'.$jy));
+function jcheckdate($jm, $jd, $jy) {
+    list($jm, $jd, $jy) = explode('_', tr_num($jm . '_' . $jd . '_' . $jy));
     $l_d = ($jm == 12 and ((($jy + 12) % 33) % 4) != 1) ? 29 : (31 - (int) ($jm / 6.5));
-
     return ($jm > 12 or $jd > $l_d or $jm < 1 or $jd < 1 or $jy < 1) ? false : true;
 }
 
 /*	F	*/
-function tr_num($str, $mod = 'en', $mf = '٫')
-{
-    $num_a = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
-    $key_a = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', $mf];
-
+function tr_num($str, $mod = 'en', $mf = '٫') {
+    $num_a = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.');
+    $key_a = array('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', $mf);
     return ($mod == 'fa') ? str_replace($num_a, $key_a, $str) : str_replace($key_a, $num_a, $str);
 }
 
 /*	F	*/
-function jdate_words($array, $mod = '')
-{
+function jdate_words($array, $mod = '') {
     foreach ($array as $type => $num) {
         $num = (int) tr_num($num);
         switch ($type) {
@@ -567,62 +522,62 @@ function jdate_words($array, $mod = '')
                 $h3 = $h34 = $h4 = '';
                 if ($xy3 == 1) {
                     $p34 = '';
-                    $k34 = ['ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده'];
+                    $k34 = array('ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده');
                     $h34 = $k34[substr($num, 2 - $sl, 2) - 10];
                 } else {
                     $xy4 = substr($num, 3 - $sl, 1);
                     $p34 = ($xy3 == 0 or $xy4 == 0) ? '' : ' و ';
-                    $k3 = ['', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود'];
+                    $k3 = array('', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود');
                     $h3 = $k3[$xy3];
-                    $k4 = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'];
+                    $k4 = array('', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه');
                     $h4 = $k4[$xy4];
                 }
                 $array[$type] = (($num > 99) ? str_replace(
-                    ['12', '13', '14', '19', '20'],
-                    ['هزار و دویست', 'هزار و سیصد', 'هزار و چهارصد', 'هزار و نهصد', 'دوهزار'],
-                    substr($num, 0, 2)
-                ).((substr($num, 2, 2) == '00') ? '' : ' و ') : '').$h3.$p34.$h34.$h4;
+                            array('12', '13', '14', '19', '20'),
+                            array('هزار و دویست', 'هزار و سیصد', 'هزار و چهارصد', 'هزار و نهصد', 'دوهزار'),
+                            substr($num, 0, 2)
+                        ) . ((substr($num, 2, 2) == '00') ? '' : ' و ') : '') . $h3 . $p34 . $h34 . $h4;
                 break;
 
             case 'mm':
-                $key = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+                $key = array('فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند');
                 $array[$type] = $key[$num - 1];
                 break;
 
             case 'rr':
-                $key = [
-                    'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه', 'ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده', 'بیست', 'بیست و یک', 'بیست و دو', 'بیست و سه', 'بیست و چهار', 'بیست و پنج', 'بیست و شش', 'بیست و هفت', 'بیست و هشت', 'بیست و نه', 'سی', 'سی و یک',
-                ];
+                $key = array(
+                    'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه', 'ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده', 'بیست', 'بیست و یک', 'بیست و دو', 'بیست و سه', 'بیست و چهار', 'بیست و پنج', 'بیست و شش', 'بیست و هفت', 'بیست و هشت', 'بیست و نه', 'سی', 'سی و یک'
+                );
                 $array[$type] = $key[$num - 1];
                 break;
 
             case 'rh':
-                $key = ['یکشنبه', 'دوشنبه', 'سه شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+                $key = array('یکشنبه', 'دوشنبه', 'سه شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه');
                 $array[$type] = $key[$num];
                 break;
 
             case 'sh':
-                $key = ['مار', 'اسب', 'گوسفند', 'میمون', 'مرغ', 'سگ', 'خوک', 'موش', 'گاو', 'پلنگ', 'خرگوش', 'نهنگ'];
+                $key = array('مار', 'اسب', 'گوسفند', 'میمون', 'مرغ', 'سگ', 'خوک', 'موش', 'گاو', 'پلنگ', 'خرگوش', 'نهنگ');
                 $array[$type] = $key[$num % 12];
                 break;
 
             case 'mb':
-                $key = ['حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'دلو', 'حوت'];
+                $key = array('حمل', 'ثور', 'جوزا', 'سرطان', 'اسد', 'سنبله', 'میزان', 'عقرب', 'قوس', 'جدی', 'دلو', 'حوت');
                 $array[$type] = $key[$num - 1];
                 break;
 
             case 'ff':
-                $key = ['بهار', 'تابستان', 'پاییز', 'زمستان'];
+                $key = array('بهار', 'تابستان', 'پاییز', 'زمستان');
                 $array[$type] = $key[(int) ($num / 3.1)];
                 break;
 
             case 'km':
-                $key = ['فر', 'ار', 'خر', 'تی‍', 'مر', 'شه‍', 'مه‍', 'آب‍', 'آذ', 'دی', 'به‍', 'اس‍'];
+                $key = array('فر', 'ار', 'خر', 'تی‍', 'مر', 'شه‍', 'مه‍', 'آب‍', 'آذ', 'دی', 'به‍', 'اس‍');
                 $array[$type] = $key[$num - 1];
                 break;
 
             case 'kh':
-                $key = ['ی', 'د', 'س', 'چ', 'پ', 'ج', 'ش'];
+                $key = array('ی', 'د', 'س', 'چ', 'پ', 'ج', 'ش');
                 $array[$type] = $key[$num];
                 break;
 
@@ -630,9 +585,9 @@ function jdate_words($array, $mod = '')
                 $array[$type] = $num;
         }
     }
-
     return ($mod === '') ? $array : implode($mod, $array);
 }
+
 
 /**  Gregorian & Jalali (Hijri_Shamsi,Solar) Date Converter Functions
 Author: JDF.SCR.IR =>> Download Full Version :  http://jdf.scr.ir/jdf
@@ -644,10 +599,9 @@ License: GNU/LGPL _ Open Source & Free :: Version: 2.80 : [2020=1399]
 1461=(365*4)+(4/4) & 146097=(365*400)+(400/4)-(400/100)+(400/400)  */
 
 /*	F	*/
-function gregorian_to_jalali($gy, $gm, $gd, $mod = '')
-{
-    [$gy, $gm, $gd] = explode('_', tr_num($gy.'_'.$gm.'_'.$gd)); /* <= Extra :اين سطر ، جزء تابع اصلي نيست */
-    $g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+function gregorian_to_jalali($gy, $gm, $gd, $mod = '') {
+    list($gy, $gm, $gd) = explode('_', tr_num($gy . '_' . $gm . '_' . $gd));/* <= Extra :اين سطر ، جزء تابع اصلي نيست */
+    $g_d_m = array(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334);
     $gy2 = ($gm > 2) ? ($gy + 1) : $gy;
     $days = 355666 + (365 * $gy) + ((int) (($gy2 + 3) / 4)) - ((int) (($gy2 + 99) / 100)) + ((int) (($gy2 + 399) / 400)) + $gd + $g_d_m[$gm - 1];
     $jy = -1595 + (33 * ((int) ($days / 12053)));
@@ -665,14 +619,12 @@ function gregorian_to_jalali($gy, $gm, $gd, $mod = '')
         $jm = 7 + (int) (($days - 186) / 30);
         $jd = 1 + (($days - 186) % 30);
     }
-
-    return ($mod == '') ? [$jy, $jm, $jd] : $jy.$mod.$jm.$mod.$jd;
+    return ($mod == '') ? array($jy, $jm, $jd) : $jy . $mod . $jm . $mod . $jd;
 }
 
 /*	F	*/
-function jalali_to_gregorian($jy, $jm, $jd, $mod = '')
-{
-    [$jy, $jm, $jd] = explode('_', tr_num($jy.'_'.$jm.'_'.$jd)); /* <= Extra :اين سطر ، جزء تابع اصلي نيست */
+function jalali_to_gregorian($jy, $jm, $jd, $mod = '') {
+    list($jy, $jm, $jd) = explode('_', tr_num($jy . '_' . $jm . '_' . $jd));/* <= Extra :اين سطر ، جزء تابع اصلي نيست */
     $jy += 1595;
     $days = -355668 + (365 * $jy) + (((int) ($jy / 33)) * 8) + ((int) ((($jy % 33) + 3) / 4)) + $jd + (($jm < 7) ? ($jm - 1) * 31 : (($jm - 7) * 30) + 186);
     $gy = 400 * ((int) ($days / 146097));
@@ -680,9 +632,7 @@ function jalali_to_gregorian($jy, $jm, $jd, $mod = '')
     if ($days > 36524) {
         $gy += 100 * ((int) (--$days / 36524));
         $days %= 36524;
-        if ($days >= 365) {
-            $days++;
-        }
+        if ($days >= 365) $days++;
     }
     $gy += 4 * ((int) ($days / 1461));
     $days %= 1461;
@@ -691,10 +641,7 @@ function jalali_to_gregorian($jy, $jm, $jd, $mod = '')
         $days = ($days - 1) % 365;
     }
     $gd = $days + 1;
-    $sal_a = [0, 31, (($gy % 4 == 0 and $gy % 100 != 0) or ($gy % 400 == 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    for ($gm = 0; $gm < 13 and $gd > $sal_a[$gm]; $gm++) {
-        $gd -= $sal_a[$gm];
-    }
-
-    return ($mod == '') ? [$gy, $gm, $gd] : $gy.$mod.$gm.$mod.$gd;
+    $sal_a = array(0, 31, (($gy % 4 == 0 and $gy % 100 != 0) or ($gy % 400 == 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
+    for ($gm = 0; $gm < 13 and $gd > $sal_a[$gm]; $gm++) $gd -= $sal_a[$gm];
+    return ($mod == '') ? array($gy, $gm, $gd) : $gy . $mod . $gm . $mod . $gd;
 }

@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\HasJalaliDates;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Exam extends Model
 {
-    protected $fillable = ['standard_id', 'title', 'question_count', 'start_date', 'end_date'];
+    use HasJalaliDates;
+    protected $fillable = ['standard_id', 'title', 'question_count', 'exam_time', 'start_date', 'end_date'];
 
     public function questions():BelongsToMany
     {
@@ -18,7 +20,14 @@ class Exam extends Model
     public function standard():BelongsTo
     {
         return $this->belongsTo(Standard::class);
-
     }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'exam_user')
+            ->withPivot(['started_at', 'finished_at', 'score', 'is_finished', 'question_order'])
+            ->withTimestamps();
+    }
+
 
 }

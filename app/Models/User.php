@@ -68,4 +68,12 @@ class User extends Authenticatable
             ->get();
     }
 
+    public function exams(): BelongsToMany
+    {
+        return $this->belongsToMany(Exam::class, 'exam_user')
+            ->withPivot(['started_at', 'finished_at', 'score', 'is_finished', 'question_order'])
+            ->withTimestamps();
+    }
+
+
 }

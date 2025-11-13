@@ -1,7 +1,7 @@
 <?php
 function j_d_stamp_en()
 {
-    return jdate('Y/m/d H:i:s', '', '', '', 'en');
+    return jdate('Y/m/d H:i:s', '', '', 'asia/Tehran', 'en');
 }
 
 function fa_num($number): string
@@ -33,4 +33,11 @@ function currency($num)
 function mask_mobile(string $mobile): string
 {
     return substr($mobile, -2) . '******' . substr($mobile, 0, 3) ;
+}
+
+
+function j_date($gd){
+    $ts = strtotime($gd);
+    $df =  jdate('Y/m/d H:i:s', $ts, '', '', 'en');
+    return $df;
 }

@@ -16,6 +16,7 @@ new class extends Component {
 
     public string $title = '';
     public string $question_count = '';
+    public int $exam_time = 0;
     public string $st_date;
     public string $st_time;
     public string $en_date;
@@ -49,6 +50,7 @@ new class extends Component {
                 'standard_id' => $this->standard_id,
                 'title' => $this->title,
                 'question_count' => $this->question_count,
+                'exam_time' => $this->exam_time,
                 'start_date' => Carbon::parse("{$this->st_date} {$this->st_time}"),
                 'end_date' => Carbon::parse("{$this->en_date} {$this->en_time}"),
             ]
@@ -60,7 +62,7 @@ new class extends Component {
             ->take($this->question_count)
             ->toArray();
         $exam->questions()->sync($questionIds);
-
+        $this->redirectRoute('exams');
     }
 
 
@@ -113,10 +115,13 @@ new class extends Component {
 
         @if($standard_id and $chapters->isNotEmpty())
             <flux:input wire:model="title" label="عنوان آزمون" type="text" class:input="text-center" required/>
-            <flux:input wire:model="question_count" label="تعداد سوالهای این آزمون"
-                        badge="{{__('تعداد انتخاب شده: ') . $total_questions}}" type="text" class:input="text-center"
-                        required/>
 
+            <div class="grid grid-cols-2 space-x-3">
+                <flux:input wire:model="question_count" label="تعداد سوالها"
+                            badge="{{__('انتخاب شده: ') . $total_questions}}" type="text" class:input="text-center" required/>
+                <flux:input wire:model="exam_time" label="مدت آزمون(دقیقه)"
+                            type="text" class:input="text-center" required/>
+            </div>
             <flux:field>
                 <flux:label>{{__('تاریخ و زمان شروع')}}</flux:label>
                 <div class="grid grid-cols-2 space-x-3" dir="ltr">

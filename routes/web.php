@@ -58,3 +58,5 @@ Volt::route('payment/callback', 'payment.callback');
 
 Volt::route('exams', 'exam.index')->name('exams')->middleware(['auth']);
 Volt::route('exam/create', 'exam.create')->name('exam_create')->middleware(['auth']);
+Volt::route('exam/{exam}/start', 'exam.start')->name('exam_start')->middleware(['auth']);
+Volt::route('exam/{exam}/take', 'exam.take')->name('exam.take')->middleware(['auth']);
