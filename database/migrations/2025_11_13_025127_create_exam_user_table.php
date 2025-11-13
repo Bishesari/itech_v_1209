@@ -15,13 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('exam_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-
             $table->dateTime('started_at')->nullable();
             $table->dateTime('finished_at')->nullable();
-
             $table->integer('score')->nullable();
-            $table->boolean('is_finished')->default(false);
-
             $table->json('question_order')->nullable(); // ترتیب سؤالات برای هر کاربر (اختیاری اما مفید)
             $table->timestamps();
 
