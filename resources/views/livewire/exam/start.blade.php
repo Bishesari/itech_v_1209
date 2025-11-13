@@ -24,7 +24,7 @@ new class extends Component {
         ]);
 
         $examUser = ExamUser::where('exam_id', $this->exam->id)->where('user_id', Auth::id())->first();
-        return redirect()->route('exam.take', ['exam_user' => $examUser->id]);
+        return redirect()->route('exam.take', ['examUser' => $examUser->id]);
 
     }
 
@@ -40,7 +40,7 @@ new class extends Component {
         @if(now()->greaterThan($examUser->started_at->addMinutes($examUser->exam->exam_time)))
             {{__('مهلت آزمون به پایان رسیده')}}
         @else
-            <flux:button href="{{route('exam.take', ['exam_user' => $examUser->id])}}">
+            <flux:button href="{{route('exam.take', ['examUser' => $examUser->id])}}">
                 {{__('درحال انجام است، ادامه آزمون.')}}
             </flux:button>
         @endif

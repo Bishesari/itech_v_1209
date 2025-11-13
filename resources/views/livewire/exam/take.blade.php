@@ -78,7 +78,7 @@ new class extends Component {
         $this->examUser->save();
 
         // هدایت به صفحه نتایج
-        return redirect()->route('exam.results', ['examUser' => $this->examUser->id]);
+        return redirect()->route('exam.result', ['examUser' => $this->examUser->id]);
     }
 
 
@@ -130,14 +130,16 @@ new class extends Component {
 
         <flux:radio.group wire:model="selectedOption" variant="cards" class="max-sm:flex-col my-2">
             @foreach($currentQuestion->options as $option)
-                <flux:radio value="{{ $option->id }}" label="{{ $option->text }}"
+                <flux:radio value="{{ $option->id }}" label="{!! $option->text !!}"
                             wire:key="option-{{ $option->id }}" class="cursor-pointer"/>
             @endforeach
         </flux:radio.group>
         <div class="flex justify-center flex-row">
             <flux:button wire:click="submitAnswer" class="cursor-pointer">{{__('ثبت پاسخ و سوال بعدی')}} {{__('->')}}</flux:button>
-            @if($user_answered_count == count($questionIds)) @endif
-            <flux:button variant="primary" color="green" wire:click="finishExam" class="cursor-pointer mr-5">{{__('ثبت پایان آزمون')}}</flux:button>
+            @if($user_answered_count == count($questionIds))
+                <flux:button variant="primary" color="green" wire:click="finishExam" class="cursor-pointer mr-5">{{__('ثبت پایان آزمون')}}</flux:button>
+            @endif
+
         </div>
     </div>
 </section>
