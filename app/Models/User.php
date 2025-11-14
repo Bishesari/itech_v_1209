@@ -47,6 +47,8 @@ class User extends Authenticatable
             ->implode('');
         */
     }
+
+
     public function profile():HasOne
     {
         return $this->hasOne(Profile::class);
@@ -75,5 +77,34 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    // کاربر در چند آموزشگاه نقش دارد
+    public function institutes(): BelongsToMany
+    {
+        return $this->belongsToMany(Institute::class, 'institute_role_user')
+            ->withPivot(['role_id', 'assigned_by'])
+            ->withTimestamps();
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'institute_role_user')
+            ->withPivot(['institute_id', 'assigned_by'])
+            ->withTimestamps();
+    }
+    // نقش‌های کاربر همراه با اطلاعات آموزشگاه
+    public function institutesWithRoles()
+    {
+        return DB::table('institute_role_user')
+            ->join('institutes', 'institute_role_user.institute_id', '=', 'institutes.id')
+            ->join('roles', 'institute_role_user.role_id', '=', 'roles.id')
+            ->where('institute_role_user.user_id', $this->id)
+            ->select(
+                'institute_role_user.*',
+                'institutes.short_name as institute_name',
+                'roles.name_en as role_name_en',
+                'roles.name_fa as role_name_fa'
+            )
+            ->get();
+    }
 
 }

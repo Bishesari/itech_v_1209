@@ -28,10 +28,12 @@ new class extends Component {
     #[On('institute-created')]
     public function institutes()
     {
-        return Institute::query()
-            ->tap(fn($query) => $this->sortBy ? $query->orderBy($this->sortBy, $this->sortDirection) : $query)
-            ->paginate(10);
-
+        $query = auth()->user()->institutes();
+        // مرتب‌سازی
+        if ($this->sortBy) {
+            $query->orderBy($this->sortBy, $this->sortDirection);
+        }
+        return $query->paginate(10);
     }
 
     #[On('institute-created')]
@@ -39,8 +41,6 @@ new class extends Component {
     {
         $this->resetPage();
     }
-
-
     public string $short_name = '';
     public string $full_name = '';
     public string $abb = '';
@@ -54,7 +54,6 @@ new class extends Component {
         $this->short_name = $institute['short_name'];
         $this->full_name = $institute['full_name'];
         $this->abb = $institute['abb'];
-        $this->remain_credit = $institute['remain_credit'];
         $this->modal('edit-institute')->show();
     }
 
@@ -68,7 +67,6 @@ new class extends Component {
                 'short_name' => 'required|min:2',
                 'full_name' => 'required|min:3',
                 'abb' => 'required|unique:institutes|size:3',
-                'remain_credit' => 'required|max:5',
             ]);
             $editing_institute->update($validated);
         } else {
@@ -76,7 +74,6 @@ new class extends Component {
                 'short_name' => 'required|min:2',
                 'full_name' => 'required|min:3',
                 'abb' => 'required|size:3',
-                'remain_credit' => 'required|max:5',
             ]);
             $editing_institute->update($validated);
         }
@@ -97,12 +94,12 @@ new class extends Component {
 
 <section class="w-full">
     <div class="relative w-full mb-2">
-        <flux:heading size="xl" level="1">{{ __('آموزشگاهها') }}</flux:heading>
+        <flux:heading size="xl" level="1">{{ __('آموزشگاههای من') }}</flux:heading>
         <flux:subheading size="lg" class="mb-2">{{ __('بخش مدیریت آموزشگاهها') }}</flux:subheading>
         <flux:separator variant="subtle"/>
     </div>
     <div class="mb-2">
-        <livewire:institute.create/>
+        <livewire:institute.create.founder/>
         <flux:separator class="mt-2" variant="subtle"/>
     </div>
 
@@ -161,12 +158,9 @@ new class extends Component {
                     <flux:table.cell class="whitespace-nowrap">{{ $institute->logo_url }}</flux:table.cell>
 
                     <flux:table.cell>
-                        <flux:button tooltip="ویرایش" wire:click="edit({{$institute}})" variant="ghost" size="sm" class="cursor-pointer">
+                        <flux:button tooltip="ویرایش" wire:click="edit({{$institute}})" variant="ghost" size="sm"
+                                     class="cursor-pointer">
                             <flux:icon.pencil-square variant="solid" class="text-amber-500 dark:text-amber-300 size-5"/>
-                        </flux:button>
-                        <flux:button tooltip="موسسان" href="{{URL::signedRoute('institute_founders', ['institute'=>$institute->id])}}" variant="ghost"
-                                     size="sm" class="cursor-pointer" wire:navigate>
-                            <flux:icon.users class="text-blue-500 size-5"/>
                         </flux:button>
 
                     </flux:table.cell>
@@ -193,8 +187,6 @@ new class extends Component {
                 <flux:input wire:model="abb" :label="__('علامت اختصاری')" type="text" class:input="text-center"
                             maxlength="3" required style="direction:ltr"/>
 
-                <flux:input wire:model="remain_credit" :label="__('مانده اعتبار')" type="text" class:input="text-center"
-                            maxlength="5" required style="direction:ltr"/>
 
                 <div class="flex justify-between space-x-2 rtl:space-x-reverse flex-row-reverse">
                     <flux:button variant="primary" color="orange" type="submit"

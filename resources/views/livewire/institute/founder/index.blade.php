@@ -130,7 +130,7 @@ new class extends Component {
         <flux:modal.trigger name="create-founder">
             <flux:button variant="primary" color="sky" size="sm" class="cursor-pointer">{{__('جدید')}}</flux:button>
         </flux:modal.trigger>
-        <flux:button variant="ghost" size="sm" href="{{route('institutes')}}" class="cursor-pointer"
+        <flux:button variant="ghost" size="sm" href="{{route('institutes.for.sa')}}" class="cursor-pointer"
                      wire:navigate>{{__('بازگشت')}}</flux:button>
         <flux:separator class="mt-2" variant="subtle"/>
     </div>

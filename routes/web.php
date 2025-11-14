@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\Founder;
+use App\Http\Middleware\SuperAdmin;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -49,6 +51,12 @@ Volt::route('users', 'user.index')->name('users')->middleware('auth');
 Volt::route('user/{user}/show', 'user.show')->name('show_user')->middleware(['auth', 'signed']);
 
 Volt::route('institutes', 'institute.index')->name('institutes')->middleware('auth');
+
+Volt::route('institutes/index/sa', 'institute.index.sa')->name('institutes.for.sa')
+    ->middleware(['auth', SuperAdmin::class]);
+Volt::route('institutes/index/founder', 'institute.index.founder')->name('institutes.for.founder')
+    ->middleware(['auth', Founder::class]);
+
 Volt::route('institute/{institute}/founders', 'institute.founder.index')->name('institute_founders')->middleware(['auth', 'signed']);
 
 Volt::route('roles', 'role.index')->name('roles')->middleware('auth');

@@ -13,20 +13,28 @@ new class extends Component {
     public string $full_name = '';
     #[Validate('required|unique:institutes|size:3')]
     public string $abb = '';
-    #[Validate('required|max:5')]
-    public int $remain_credit = 1000;
+    public int $remain_credit = 0;
 
     public function create_institute(): void
     {
         $this->abb = strtoupper($this->abb);
         $this->validate();
-        Institute::create([
+        $institute = Institute::create([
             'short_name' => $this->short_name,
             'full_name' => $this->full_name,
             'abb' => $this->abb,
             'remain_credit' => $this->remain_credit,
-            'created' => j_d_stamp_en()
         ]);
+
+        // دریافت نقش موسس (Founder)
+        $founderRoleId = \App\Models\Role::where('name_en', 'Founder')->value('id');
+
+        // اتصال کاربر جاری به آموزشگاه به عنوان موسس
+        auth()->user()->institutes()->attach($institute->id, [
+            'role_id' => $founderRoleId,
+            'assigned_by' => auth()->id(), // خود کاربر، یا می‌تونی null بزاری
+        ]);
+
         $this->modal('create_institute')->close();
         $this->dispatch('institute-created');
         $this->reset();
@@ -43,12 +51,12 @@ new class extends Component {
 <section>
 
     <flux:modal.trigger name="create_institute">
-        <flux:button variant="primary" color="sky" size="sm" class="cursor-pointer">{{__('جدید')}}</flux:button>
+        <flux:button variant="primary" color="sky" size="sm" class="cursor-pointer">{{__('افزودن')}}</flux:button>
     </flux:modal.trigger>
     <flux:modal name="create_institute" :show="$errors->isNotEmpty()" focusable class="w-80 md:w-96" :dismissible="false">
         <div class="space-y-6">
             <div>
-                <flux:heading size="lg">{{ __('درج آموزشگاه جدید') }}</flux:heading>
+                <flux:heading size="lg">{{ __('افزودن آموزشگاه جدید') }}</flux:heading>
                 <flux:text class="mt-2">{{ __('اطلاعات مربوط به آموزشگاه را وارد نمایید.') }}</flux:text>
             </div>
             <form wire:submit="create_institute" class="flex flex-col gap-6" autocomplete="off">
@@ -61,14 +69,11 @@ new class extends Component {
                 <flux:input wire:model="abb" :label="__('علامت اختصاری')" type="text" class:input="text-center"
                             maxlength="3" required style="direction:ltr"/>
 
-                <flux:input wire:model="remain_credit" :label="__('مانده اعتبار')" type="text" class:input="text-center"
-                            maxlength="5" required style="direction:ltr"/>
-
                 <div class="flex justify-between space-x-2 rtl:space-x-reverse flex-row-reverse">
-                    <flux:button variant="primary" color="green" type="submit"
+                    <flux:button variant="primary" color="green" type="submit" size="sm"
                                  class="cursor-pointer">{{ __('ثبت') }}</flux:button>
                     <flux:modal.close>
-                        <flux:button variant="filled" class="cursor-pointer">{{ __('انصراف') }}</flux:button>
+                        <flux:button size="sm" variant="filled" class="cursor-pointer">{{ __('انصراف') }}</flux:button>
                     </flux:modal.close>
                 </div>
             </form>
