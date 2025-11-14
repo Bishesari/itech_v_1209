@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name_en', 35)->unique();
             $table->string('name_fa', 35)->unique();
+            $table->boolean('assignable_by_founder')->default(false);
             $table->timestamps();
         });
     }
