@@ -189,10 +189,10 @@ new class extends Component {
 
 
                 <div class="flex justify-between space-x-2 rtl:space-x-reverse flex-row-reverse">
-                    <flux:button variant="primary" color="orange" type="submit"
+                    <flux:button variant="primary" color="orange" type="submit" size="sm"
                                  class="cursor-pointer">{{ __('ویرایش') }}</flux:button>
                     <flux:modal.close>
-                        <flux:button variant="filled" class="cursor-pointer">{{ __('انصراف') }}</flux:button>
+                        <flux:button variant="filled" size="sm" class="cursor-pointer">{{ __('انصراف') }}</flux:button>
                     </flux:modal.close>
                 </div>
             </form>
