@@ -144,7 +144,7 @@ new class extends Component {
         <flux:table.rows>
             @foreach ($this->institutes as $institute)
 
-                <flux:table.row class="dark:hover:bg-zinc-900 transition hover:bg-zinc-100" :key="$institute->id">
+                <flux:table.row class="dark:hover:bg-zinc-900 transition hover:bg-zinc-100" wire:key="$institute->id">
                     <flux:table.cell class="whitespace-nowrap">{{ $institute->id }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $institute->short_name }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $institute->full_name }}</flux:table.cell>

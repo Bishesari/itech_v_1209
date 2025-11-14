@@ -1,5 +1,4 @@
 <?php
-
 use App\Models\Role;
 use Flux\Flux;
 
@@ -42,6 +41,7 @@ new class extends Component {
 
     public string $name_fa = '';
     public string $name_en = '';
+    public int $assignable_by_founder = 0;
 
     public int $editing_id = 0;
 
@@ -50,34 +50,19 @@ new class extends Component {
         $this->editing_id = $role['id'];
         $this->name_fa = $role['name_fa'];
         $this->name_en = $role['name_en'];
+        $this->assignable_by_founder = $role['assignable_by_founder'];
         $this->modal('edit-role')->show();
     }
 
     public function update(): void
     {
         $editing_role = Role::find($this->editing_id);
-
-        if ( ($editing_role['name_fa'] != $this->name_fa) and ($editing_role['name_en'] != $this->name_en) ){
-            $validated = $this->validate([
-                'name_fa' => 'required|unique:roles|min:2',
-                'name_en' => 'required|unique:roles|min:3',
-            ]);
-            $editing_role->update($validated);
-        }
-        elseif ( ($editing_role['name_fa'] != $this->name_fa) and ($editing_role['name_en'] == $this->name_en) ){
-            $validated = $this->validate([
-                'name_fa' => 'required|unique:roles|min:2',
-                'name_en' => 'required|min:3',
-            ]);
-            $editing_role->update($validated);
-        }
-        elseif ( ($editing_role['name_fa'] == $this->name_fa) and ($editing_role['name_en'] != $this->name_en) ){
-            $validated = $this->validate([
-                'name_fa' => 'required|min:2',
-                'name_en' => 'required|unique:roles|min:3',
-            ]);
-            $editing_role->update($validated);
-        }
+        $validated = $this->validate([
+            'name_fa' => 'required|min:2|unique:roles,name_fa,' . $editing_role->id,
+            'name_en' => 'required|min:3|unique:roles,name_en,' . $editing_role->id,
+            'assignable_by_founder' => 'boolean',
+        ]);
+        $editing_role->update($validated);
         $this->modal('edit-role')->close();
         Flux::toast(
             heading: 'انجام شد.',
@@ -85,12 +70,10 @@ new class extends Component {
             variant: 'success'
         );
     }
-
     public function reset_edit(): void
     {
         $this->editing_id = 0;
     }
-
 }; ?>
 
 <section class="w-full">
@@ -120,20 +103,17 @@ new class extends Component {
                                wire:click="sort('name_en')">
                 {{__('عنوان لاتین')}}
             </flux:table.column>
+            <flux:table.column align="center">{{__('قابل تخصیص توسط موسس')}}</flux:table.column>
             <flux:table.column align="center">{{__('عملیات')}}</flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
             @foreach ($this->roles as $role)
-                @php($ed = '')
-                @if($role->id == $editing_id)
-                    @php($ed = 'bg-amber-100')
-                @endif
-
-                <flux:table.row class="hover:bg-green-50 {{$ed}}" :key="$role->id">
+                <flux:table.row class="dark:hover:bg-zinc-900 transition hover:bg-zinc-100" wire:key="$role->id">
                     <flux:table.cell class="whitespace-nowrap">{{ $role->id }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $role->name_fa }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $role->name_en }}</flux:table.cell>
+                    <flux:table.cell class="whitespace-nowrap">{{ $role->assignable_by_founder ? 'بله' : 'خیر' }}</flux:table.cell>
 
                     <flux:table.cell>
                         <flux:button wire:click="edit({{$role}})" variant="ghost" size="sm" class="cursor-pointer">
@@ -162,6 +142,10 @@ new class extends Component {
                             maxlength="35" required autofocus/>
                 <flux:input wire:model="name_en" :label="__('عنوان لاتین')" type="text" class:input="text-center"
                             maxlength="35" required style="direction:ltr"/>
+                <flux:radio.group wire:model="assignable_by_founder" label="قابل تخصیص توسط موسس" variant="segmented">
+                    <flux:radio value=1 label="بله" class="cursor-pointer" />
+                    <flux:radio value=0 label="خیر" class="cursor-pointer" />
+                </flux:radio.group>
                 <div class="flex justify-between space-x-2 rtl:space-x-reverse flex-row-reverse">
                     <flux:button variant="primary" color="orange" type="submit"
                                  class="cursor-pointer">{{ __('ویرایش') }}</flux:button>

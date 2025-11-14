@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Role extends Model
 {
-    protected $fillable = ['name_fa', 'name_en', 'created', 'updated'];
+    protected $fillable = ['name_fa', 'name_en', 'assignable_by_founder', 'created', 'updated'];
 
 }
