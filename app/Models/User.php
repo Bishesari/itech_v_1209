@@ -126,4 +126,14 @@ class User extends Authenticatable
             ->get();
     }
 
+    public function groupedRoles()
+    {
+        return $this->belongsToMany(Role::class, 'institute_role_user')
+            ->withPivot(['institute_id'])
+            ->get()
+            ->groupBy(function ($role) {
+                return $role->pivot->institute_id ?? 'global';
+            });
+    }
+
 }

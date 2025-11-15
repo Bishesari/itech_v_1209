@@ -135,22 +135,36 @@ new class extends Component {
                     <flux:table.cell class="whitespace-nowrap">{{ $user->id }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $user->user_name }}</flux:table.cell>
 
-                    @php($allRoles = $user->institutesWithRoles())
                     <flux:table.cell class="whitespace-nowrap">
 
-                        @php($grouped = $allRoles->groupBy('institute_name'))
+                        @php($groups = $user->groupedRoles())
 
-                        @foreach($grouped as $institute => $roles)
-                            <div class="mb-1">
-                                <strong class="text-blue-600">{{ $institute }}:</strong>
 
-                                @foreach($roles as $role)
-                                    <flux:badge size="sm" color="cyan">
-                                        {{ $role->role_name_fa }}
-                                    </flux:badge>
-                                @endforeach
-                            </div>
-                        @endforeach
+                        <div class="space-y-3">
+
+                            {{-- نقش‌های عمومی (بدون آموزشگاه) --}}
+                            @if($groups->has('global'))
+                                <div>
+                                    <strong>نقش‌های عمومی:</strong>
+                                    @foreach($groups['global'] as $role)
+                                        <flux:badge size="sm" color="cyan">{{ $role->name_fa }}</flux:badge>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            {{-- نقش‌های مربوط به آموزشگاه‌ها --}}
+                            @foreach($groups as $instituteId => $roles)
+                                @if($instituteId !== 'global')
+                                    <div>
+                                        <strong>آموزشگاه: {{ \App\Models\Institute::find($instituteId)->name ?? 'ناشناخته' }}</strong>
+                                        @foreach($roles as $role)
+                                            <flux:badge size="sm" color="purple">{{ $role->name_fa }}</flux:badge>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            @endforeach
+
+                        </div>
                     </flux:table.cell>
 
 
