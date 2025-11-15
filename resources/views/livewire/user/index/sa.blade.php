@@ -136,35 +136,31 @@ new class extends Component {
                     <flux:table.cell class="whitespace-nowrap">{{ $user->user_name }}</flux:table.cell>
 
                     <flux:table.cell class="whitespace-nowrap">
+                        @php($data = $user->groupedRoles())
+                        @php($groups = $data['grouped'])
+                        @php($institutes = $data['institutes'])
 
-                        @php($groups = $user->groupedRoles())
+                        {{-- نقش‌های عمومی --}}
+                        @if($groups->has('global'))
+                            <div class="my-1">
+                                @foreach($groups['global'] as $role)
+                                    <flux:badge size="sm" color="cyan">{{ $role->name_fa }}</flux:badge>
+                                @endforeach
+                            </div>
+                        @endif
 
-
-                        <div class="space-y-3">
-
-                            {{-- نقش‌های عمومی (بدون آموزشگاه) --}}
-                            @if($groups->has('global'))
-                                <div>
-                                    <strong>نقش‌های عمومی:</strong>
-                                    @foreach($groups['global'] as $role)
-                                        <flux:badge size="sm" color="cyan">{{ $role->name_fa }}</flux:badge>
+                        {{-- نقش‌های دارای آموزشگاه --}}
+                        @foreach($groups as $instituteId => $roles)
+                            @if($instituteId !== 'global')
+                                <div class="my-1">
+                                    {{ $institutes[$instituteId]->short_name ?? '---' }}
+                                    @foreach($roles as $role)
+                                        <flux:badge size="sm" color="purple">{{ $role->name_fa }}</flux:badge>
                                     @endforeach
                                 </div>
                             @endif
+                        @endforeach
 
-                            {{-- نقش‌های مربوط به آموزشگاه‌ها --}}
-                            @foreach($groups as $instituteId => $roles)
-                                @if($instituteId !== 'global')
-                                    <div>
-                                        <strong>آموزشگاه: {{ \App\Models\Institute::find($instituteId)->name ?? 'ناشناخته' }}</strong>
-                                        @foreach($roles as $role)
-                                            <flux:badge size="sm" color="purple">{{ $role->name_fa }}</flux:badge>
-                                        @endforeach
-                                    </div>
-                                @endif
-                            @endforeach
-
-                        </div>
                     </flux:table.cell>
 
 

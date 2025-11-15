@@ -128,12 +128,17 @@ class User extends Authenticatable
 
     public function groupedRoles()
     {
-        return $this->belongsToMany(Role::class, 'institute_role_user')
+        $roles = $this->belongsToMany(Role::class, 'institute_role_user')
             ->withPivot(['institute_id'])
-            ->get()
-            ->groupBy(function ($role) {
-                return $role->pivot->institute_id ?? 'global';
-            });
+            ->get();
+        // همه institute ها را یکجا بگیر
+        $instituteIds = $roles->pluck('pivot.institute_id')->filter()->unique();
+        $institutes = Institute::whereIn('id', $instituteIds)->get()->keyBy('id');
+        return [
+            'roles'      => $roles,
+            'institutes' => $institutes,
+            'grouped'    => $roles->groupBy(fn($role) => $role->pivot->institute_id ?? 'global'),
+        ];
     }
 
 }
