@@ -29,10 +29,16 @@ new class extends Component {
     #[On('user-created')]
     public function users()
     {
-        return User::query()
-            ->tap(fn($query) => $this->sortBy ? $query->orderBy($this->sortBy, $this->sortDirection) : $query)
-            ->paginate(10);
-
+        $activeInstituteId = session('active_institute_id');
+        // کاربران آموزشگاه جاری
+        $query = User::whereHas('institutes', function ($q) use ($activeInstituteId) {
+            $q->where('institutes.id', $activeInstituteId);
+        });
+        // مرتب سازی
+        if ($this->sortBy) {
+            $query->orderBy($this->sortBy, $this->sortDirection);
+        }
+        return $query->paginate(10);
     }
 
     #[On('user-created')]
@@ -95,12 +101,18 @@ new class extends Component {
 
 }; ?>
 
-<div>
-    <div class="bg-zinc-100 dark:bg-zinc-600 dark:text-zinc-300 py-3 relative">
-        <p class="font-semibold text-center">{{__('لیست کاربران')}}</p>
-{{--        <livewire:role.create/>--}}
+<section class="w-full">
+    <div class="relative w-full mb-2">
+        <flux:heading size="xl" level="1">{{ __('کاربران آموزشگاه من') }}</flux:heading>
+        <flux:subheading size="lg" class="mb-2">{{ __('بخش مدیریت کاربران') }}</flux:subheading>
+        <flux:separator variant="subtle"/>
     </div>
-    <flux:table :paginate="$this->users" class="text-center">
+    <div class="mb-2">
+        <livewire:institute.create.founder/>
+        <flux:separator class="mt-2" variant="subtle"/>
+    </div>
+
+    <flux:table :paginate="$this->users" class="text-center inline">
         <flux:table.columns>
             <flux:table.column align="center" sortable :sorted="$sortBy === 'id'" :direction="$sortDirection"
                                wire:click="sort('id')">
@@ -111,6 +123,8 @@ new class extends Component {
                                wire:click="sort('user_name')">
                 {{__('نام کاربری')}}
             </flux:table.column>
+
+            <flux:table.column align="center">{{__('نقشها در آموزشگاه من')}}</flux:table.column>
 
 
             <flux:table.column align="center" sortable :sorted="$sortBy === 'created'" :direction="$sortDirection"
@@ -127,26 +141,33 @@ new class extends Component {
 
         <flux:table.rows>
             @foreach ($this->users as $user)
-                @php($ed = '')
-                @if($user->id == $editing_id)
-                    @php($ed = 'bg-amber-100')
-                @endif
 
-                <flux:table.row class="hover:bg-green-50 {{$ed}}" :key="$user->id">
+                <flux:table.row class="dark:hover:bg-zinc-900 transition hover:bg-zinc-100" wire:key="$user->id">
                     <flux:table.cell class="whitespace-nowrap">{{ $user->id }}</flux:table.cell>
                     <flux:table.cell class="whitespace-nowrap">{{ $user->user_name }}</flux:table.cell>
-                    <flux:table.cell class="whitespace-nowrap">
-                        {{substr($user['created'], 0, 10)}}
-                        <hr>
-                        {{substr($user['created'], 11, 5)}}
 
-                    </flux:table.cell>
+                    @php($roles = $user->rolesInActiveInstitute())
                     <flux:table.cell class="whitespace-nowrap">
-                        {{substr($user['updated'], 0, 10)}}
-                        @if($user['updated'])
-                            <hr>
+                        @if($roles->count() > 0)
+                            @foreach($roles as $role)
+                                <flux:badge size="sm" color="cyan">{{ $role->role_name_fa }}</flux:badge>
+                            @endforeach
+                        @else
+                            <flux:badge color="cyan">{{__('بدون نقش')}}</flux:badge>
                         @endif
-                        {{substr($user['updated'], 11, 5)}}
+                    </flux:table.cell>
+
+
+                    <flux:table.cell class="whitespace-nowrap">
+                        <div class="leading-tight">
+                            <div>{{ explode(' ', $user->jalali_created_at)[0] }}</div>
+                            <div class="text-xs">{{ substr($user->jalali_created_at, 11, 5) }}</div>
+                        </div>
+                    </flux:table.cell>
+
+                    <flux:table.cell class="whitespace-nowrap">
+                        <div>{{ explode(' ', $user->jalali_updated_at)[0] }}</div>
+                        <div class="text-xs">{{ substr($user->jalali_updated_at, 11, 5) }}</div>
                     </flux:table.cell>
 
                     <flux:table.cell>
@@ -188,6 +209,6 @@ new class extends Component {
             </form>
         </div>
     </flux:modal>
-</div>
+</section>
 
 

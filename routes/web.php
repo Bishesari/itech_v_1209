@@ -47,12 +47,21 @@ Volt::route('question/{sid}/{cid}/index', 'question.index')->name('questions')->
 Volt::route('question/{sid}/{cid}/create', 'question.create')->name('create_question')->middleware(['auth', 'signed']);
 Volt::route('question/{question}/edit', 'question.edit')->name('edit_question')->middleware(['auth', 'signed']);
 
-Volt::route('users', 'user.index')->name('users')->middleware('auth');
+
+
+Volt::route('sa/users/index', 'user.index.sa')->name('users.for.sa')
+    ->middleware(['auth', SuperAdmin::class]);
+Volt::route('founder/users/index', 'user.index.founder')->name('users.for.founder')
+    ->middleware(['auth', Founder::class]);
+
+
 Volt::route('user/{user}/show', 'user.show')->name('show_user')->middleware(['auth', 'signed']);
 
-Volt::route('institutes/index/sa', 'institute.index.sa')->name('institutes.for.sa')
+
+
+Volt::route('sa/institutes/index', 'institute.index.sa')->name('institutes.for.sa')
     ->middleware(['auth', SuperAdmin::class]);
-Volt::route('institutes/index/founder', 'institute.index.founder')->name('institutes.for.founder')
+Volt::route('founder/institutes/index', 'institute.index.founder')->name('institutes.for.founder')
     ->middleware(['auth', Founder::class]);
 
 Volt::route('institute/{institute}/founders', 'institute.founder.index')->name('institute_founders')->middleware(['auth', 'signed']);

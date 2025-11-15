@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\HasJalaliDates;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +16,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasJalaliDates;
     protected $fillable = ['type', 'user_name', 'password'];
     protected $hidden = [
         'password',
@@ -98,6 +99,24 @@ class User extends Authenticatable
             ->join('institutes', 'institute_role_user.institute_id', '=', 'institutes.id')
             ->join('roles', 'institute_role_user.role_id', '=', 'roles.id')
             ->where('institute_role_user.user_id', $this->id)
+            ->select(
+                'institute_role_user.*',
+                'institutes.short_name as institute_name',
+                'roles.name_en as role_name_en',
+                'roles.name_fa as role_name_fa'
+            )
+            ->get();
+    }
+
+    public function rolesInActiveInstitute()
+    {
+        $activeInstituteId = session('active_institute_id');
+
+        return DB::table('institute_role_user')
+            ->join('institutes', 'institute_role_user.institute_id', '=', 'institutes.id')
+            ->join('roles', 'institute_role_user.role_id', '=', 'roles.id')
+            ->where('institute_role_user.user_id', $this->id)
+            ->where('institute_role_user.institute_id', $activeInstituteId)
             ->select(
                 'institute_role_user.*',
                 'institutes.short_name as institute_name',
