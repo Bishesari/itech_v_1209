@@ -5,6 +5,7 @@
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
 
+
     @php
         use App\Models\Role;
         $activeRole = Role::find(session('active_role_id'));
