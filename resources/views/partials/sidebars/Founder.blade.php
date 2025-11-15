@@ -7,8 +7,7 @@
         {{ __('آموزشگاهها') }}
     </flux:navlist.item>
 
-
-    <flux:navlist.item icon="user-group" :href="route('users')" :current="request()->routeIs('users')" wire:navigate>{{ __('کاربران') }}</flux:navlist.item>
+    <flux:navlist.item icon="user-group" :href="route('users')" :current="request()->routeIs('users')" wire:navigate>{{ __('کاربران آموزشگاه من') }}</flux:navlist.item>
 
     <flux:navlist.item icon="user-group" :href="route('fields')" :current="request()->routeIs('fields')" wire:navigate>{{ __('رشته های آموزشی') }}</flux:navlist.item>
     <flux:navlist.item icon="user-group" :href="route('standards')" :current="request()->routeIs('standards')" wire:navigate>{{ __('استانداردهای آموزشی') }}</flux:navlist.item>

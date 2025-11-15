@@ -7,6 +7,8 @@
                 <flux:navlist.item :href="route('two-factor.show')" wire:navigate>{{ __('کد دوعاملی') }}</flux:navlist.item>
             @endif
             <flux:navlist.item :href="route('appearance.edit')" wire:navigate>{{ __('تم') }}</flux:navlist.item>
+
+            <flux:navlist.item :href="route('select_role')" wire:navigate>{{ __('نقشهای من') }}</flux:navlist.item>
         </flux:navlist>
     </div>
 

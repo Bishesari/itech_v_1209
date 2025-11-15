@@ -50,8 +50,6 @@ Volt::route('question/{question}/edit', 'question.edit')->name('edit_question')-
 Volt::route('users', 'user.index')->name('users')->middleware('auth');
 Volt::route('user/{user}/show', 'user.show')->name('show_user')->middleware(['auth', 'signed']);
 
-Volt::route('institutes', 'institute.index')->name('institutes')->middleware('auth');
-
 Volt::route('institutes/index/sa', 'institute.index.sa')->name('institutes.for.sa')
     ->middleware(['auth', SuperAdmin::class]);
 Volt::route('institutes/index/founder', 'institute.index.founder')->name('institutes.for.founder')
