@@ -22,7 +22,7 @@
                     @includeIf('partials.sidebars.' . $activeRole->name_en)
                 @else
                     <flux:navlist.group :heading="__('بدون نقش')" class="grid">
-                        <flux:navlist.item icon="alert-triangle">
+                        <flux:navlist.item>
                             {{ __('هیچ نقشی انتخاب نشده است.') }}
                         </flux:navlist.item>
                     </flux:navlist.group>
@@ -34,7 +34,7 @@
             <!-- Desktop User Menu -->
             <flux:dropdown class="hidden lg:block" position="bottom" align="start">
                 <flux:profile
-                    :name="auth()->user()->name"
+                    :name="auth()->user()->user_name"
                     :initials="auth()->user()->initials()"
                     icon:trailing="chevrons-up-down"
                     data-test="sidebar-menu-button"
