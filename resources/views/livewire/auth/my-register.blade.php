@@ -141,6 +141,9 @@ class extends Component {
             event(new Registered($user));
             Auth::login($user);
             Session::regenerate();
+            session([
+                'active_role_id' => 1,
+            ]);
             $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
 
         }

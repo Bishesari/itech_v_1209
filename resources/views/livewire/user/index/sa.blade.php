@@ -101,6 +101,10 @@ new class extends Component {
         <flux:subheading size="lg" class="mb-2">{{ __('بخش مدیریت کاربران آموزشگاهها') }}</flux:subheading>
         <flux:separator variant="subtle"/>
     </div>
+    <div class="mb-2">
+        <livewire:user.create.sa/>
+        <flux:separator class="mt-2" variant="subtle"/>
+    </div>
 
     <flux:table :paginate="$this->users" class="text-center inline">
         <flux:table.columns>

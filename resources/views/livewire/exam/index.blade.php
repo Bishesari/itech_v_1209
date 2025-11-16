@@ -92,7 +92,6 @@ new class extends Component {
                         </div>
                     @else
                         <div class="mt-3 p-2 rounded-xl bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 flex items-center gap-2">
-                            <flux:icon name="circle-dot" class="w-5 h-5"/>
                             <flux:text>{{ __('شرکت‌نکرده') }}</flux:text>
                         </div>
                     @endif
