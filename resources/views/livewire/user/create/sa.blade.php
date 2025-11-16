@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\Profile;
+use App\Models\Role;
 use App\Rules\NCode;
+use Livewire\Attributes\Computed;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -11,6 +13,19 @@ new class extends Component {
     public string $f_name_fa = '';
     public string $l_name_fa = '';
     public array $mobiles = [];
+
+    public $search = '';
+    public $roleId = null;
+
+    #[Computed]
+    public function roles()
+    {
+        return Role::query()
+            ->when($this->search, fn($query) => $query->where('name_fa', 'like', '%' . $this->search . '%'))
+            ->limit(5)
+            ->get();
+    }
+
 
     public function open_create_user_modal(): void
     {
@@ -40,7 +55,8 @@ new class extends Component {
 
 <div>
     {{--    Create User Modal   --}}
-    <flux:button variant="primary" color="sky" size="sm" class="cursor-pointer" wire:click="open_create_user_modal">{{__('جدید')}}</flux:button>
+    <flux:button variant="primary" color="sky" size="sm" class="cursor-pointer"
+                 wire:click="open_create_user_modal">{{__('جدید')}}</flux:button>
     <flux:modal name="create-user" :show="$errors->isNotEmpty()" focusable class="w-80 md:w-96"
                 :dismissible="false">
         <div class="space-y-6">
@@ -66,18 +82,26 @@ new class extends Component {
                 :dismissible="false">
         <div class="space-y-6">
             <div>
-                <flux:heading size="lg">{{ __('تکمیل اطلاعات موسس.') }}</flux:heading>
+                <flux:heading size="lg">{{ __('تکمیل اطلاعات کاربر جدید') }}</flux:heading>
                 <flux:text class="mt-2">{{ __('شماره موبایل تکراری هم باشد، وارد کنید.') }}</flux:text>
             </div>
-            <form wire:submit="create_founder_role" class="flex flex-col gap-5" autocomplete="off">
+            <form wire:submit="create_role" class="flex flex-col gap-5" autocomplete="off">
                 <flux:input readonly wire:model="n_code" :label="__('کدملی:')" type="text" class:input="text-center"
                             maxlength="10" style="direction:ltr"/>
-                <flux:input wire:model="f_name_fa" :label="__('نام:')" type="text"
-                            class:input="text-center"
-                            maxlength="30" required autofocus/>
-                <flux:input wire:model="l_name_fa" :label="__('نام خانوادگی:')" type="text"
-                            class:input="text-center"
-                            maxlength="40" required/>
+
+
+                <flux:select variant="listbox" searchable>
+                    <x-slot name="input">
+                        <flux:select.button placeholder="Choose industry..." :invalid="$errors->has('...')" />
+                    </x-slot>
+                    @foreach ($this->roles as $user)
+                        <flux:select.option value="{{ $user->id }}" wire:key="{{ $user->id }}">
+                            {{ $user->name }}
+                        </flux:select.option>
+                    @endforeach
+                </flux:select>
+
+
                 <flux:input wire:model="mobile_nu" :label="__('شماره موبایل:')" type="text"
                             class:input="text-center"
                             maxlength="11"/>
