@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Institute;
 use App\Models\Profile;
 use App\Models\Role;
 use App\Rules\NCode;
@@ -13,19 +14,6 @@ new class extends Component {
     public string $f_name_fa = '';
     public string $l_name_fa = '';
     public array $mobiles = [];
-
-    public $search = '';
-    public $roleId = null;
-
-    #[Computed]
-    public function roles()
-    {
-        return Role::query()
-            ->when($this->search, fn($query) => $query->where('name_fa', 'like', '%' . $this->search . '%'))
-            ->limit(5)
-            ->get();
-    }
-
 
     public function open_create_user_modal(): void
     {
@@ -49,6 +37,17 @@ new class extends Component {
 
         $this->modal('create-user')->close();
         $this->modal('create-user-profile')->show();
+    }
+
+    public $roleId = null;
+    #[Computed]
+    public function shouldShowInstitute()
+    {
+        if (!$this->roleId) return true;
+
+        $role = Role::find($this->roleId);
+
+        return !in_array($role->name_en, ['SuperAdmin', 'Newbie']);
     }
 
 }; ?>
@@ -83,28 +82,35 @@ new class extends Component {
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">{{ __('تکمیل اطلاعات کاربر جدید') }}</flux:heading>
-                <flux:text class="mt-2">{{ __('شماره موبایل تکراری هم باشد، وارد کنید.') }}</flux:text>
+                <flux:text class="mt-2">{{ __('نقش کاربر را در آموزشگاه مشخص کنید.') }}</flux:text>
             </div>
             <form wire:submit="create_role" class="flex flex-col gap-5" autocomplete="off">
                 <flux:input readonly wire:model="n_code" :label="__('کدملی:')" type="text" class:input="text-center"
                             maxlength="10" style="direction:ltr"/>
 
-
-                <flux:select variant="listbox" searchable>
-                    <x-slot name="input">
-                        <flux:select.button placeholder="Choose industry..." :invalid="$errors->has('...')" />
-                    </x-slot>
-                    @foreach ($this->roles as $user)
-                        <flux:select.option value="{{ $user->id }}" wire:key="{{ $user->id }}">
-                            {{ $user->name }}
+                <flux:select wire:model.live="roleId" variant="listbox" :label="__('انتخاب نقش:')" placeholder="یک نقش انتخاب کنید..." searchable>
+                    @foreach (Role::orderBy('name_fa')->get() as $role)
+                        <flux:select.option value="{{ $role->id }}" wire:key="{{ $role->id }}">
+                            {{ $role->name_fa }}
                         </flux:select.option>
                     @endforeach
                 </flux:select>
+
+                @if ($this->shouldShowInstitute)
+                    <flux:select wire:model="instituteId" variant="listbox" :label="__('انتخاب آموزشگاه:')" placeholder="یک آموزشگاه انتخاب کنید..." searchable>
+                        @foreach (Institute::orderBy('short_name')->get() as $institute)
+                            <flux:select.option value="{{ $institute->id }}" wire:key="{{ $institute->id }}">
+                                {{ $institute->short_name }}
+                            </flux:select.option>
+                        @endforeach
+                    </flux:select>
+                @endif
 
 
                 <flux:input wire:model="mobile_nu" :label="__('شماره موبایل:')" type="text"
                             class:input="text-center"
                             maxlength="11"/>
+
                 <flux:separator text="شماره های موجود"/>
                 <div class="flex justify-around">
                     @foreach($mobiles as $mobile)
