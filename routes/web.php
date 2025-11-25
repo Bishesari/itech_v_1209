@@ -69,10 +69,20 @@ Volt::route('institute/{institute}/founders', 'institute.founder.index')->name('
 Volt::route('roles', 'role.index')->name('roles')->middleware('auth');
 Volt::route('role/{role}/show', 'role.show')->name('show_role')->middleware(['auth', 'signed']);
 
-Volt::route('payment/callback', 'payment.callback');
 
 Volt::route('exams', 'exam.index')->name('exams')->middleware(['auth']);
 Volt::route('exam/create', 'exam.create')->name('exam_create')->middleware(['auth']);
 Volt::route('exam/{exam}/start', 'exam.start')->name('exam_start')->middleware(['auth']);
 Volt::route('exam_user/{examUser}/take', 'exam.take')->name('exam.take')->middleware(['auth']);
 Volt::route('exam_user/{examUser}/result', 'exam.result')->name('exam.result')->middleware(['auth']);
+
+use App\Http\Controllers\TestSepController;
+
+
+Volt::route('payment/callback', 'payment.callback');
+
+Route::get('sep/test', [TestSepController::class, 'start'])->name('sep.test');
+Route::post('sep/pay', [TestSepController::class, 'pay'])->name('sep.pay');
+Route::match(['get', 'post'], 'sep/callback', [TestSepController::class, 'callback'])->name('sep.callback');
+
+Volt::route('sepp/pay', 'pay');
