@@ -21,9 +21,10 @@ class TestSepController extends Controller
         ])->post('https://sep.shaparak.ir/onlinepg/onlinepg', [
             "action" => "Token",
             "TerminalId" => 31266886,
-            "Amount" => 15000,
+            "Amount" => 12000,
             "ResNum" => $resNum,
-            "RedirectUrl" => 'https://itechit.ir/payment/callback',
+            "RedirectUrl" => route('sep.callback'),
+//            "RedirectUrl" => 'https://itechit.ir/payment/callback',
             "CellNumber" =>"09177755924",
 
         ]);

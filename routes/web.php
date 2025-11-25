@@ -76,9 +76,9 @@ Volt::route('exam/{exam}/start', 'exam.start')->name('exam_start')->middleware([
 Volt::route('exam_user/{examUser}/take', 'exam.take')->name('exam.take')->middleware(['auth']);
 Volt::route('exam_user/{examUser}/result', 'exam.result')->name('exam.result')->middleware(['auth']);
 
+
+
 use App\Http\Controllers\TestSepController;
-
-
 Volt::route('payment/callback', 'payment.callback');
 
 Route::get('sep/test', [TestSepController::class, 'start'])->name('sep.test');
