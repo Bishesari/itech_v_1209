@@ -10,40 +10,48 @@ class PaymentController extends Controller
 {
     public function callback(Request $request)
     {
-        // وضعیت تراکنش
+        // 1) وضعیت پرداخت
         if ($request->State !== "OK") {
-            return response("<h2>پرداخت ناموفق بود</h2><p>وضعیت تراکنش: {$request->State}</p>", 200);
+            return "پرداخت ناموفق بود: " . $request->State;
         }
 
-        // Verify تراکنش
+        // 2) VerifyTransaction با TerminalNumber (نسخه صحیح)
         $verify = Http::withHeaders([
             'Content-Type' => 'application/json'
-        ])->post('https://sep.shaparak.ir/onlinepg/verify', [
-            "RefNum" => $request->RefNum,
-            "TerminalId" => "31266886"
+        ])->post('https://sep.shaparak.ir/verifyTxnRandomSessionkey/ipg/VerifyTransaction', [
+            "RefNum"         => $request->RefNum,
+            "TerminalNumber" => 31266886   // دقت کن همین مقدار صحیح است
         ]);
 
         $verifyResult = $verify->json();
 
-        if (!isset($verifyResult["ResultCode"]) || $verifyResult["ResultCode"] != 0) {
-            return response("<h2>خطا در Verify تراکنش</h2><p>" . json_encode($verifyResult) . "</p>", 200);
+        // 3) بررسی خطا
+        if (!$verifyResult || !isset($verifyResult["ResultCode"])) {
+            return "خطا در Verify (خروجی نامعتبر): " . json_encode($verifyResult, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
         }
 
-        // ذخیره سفارش
-        $order = new Order();
-        $order->product_id = 1; // ICDL
-        $order->resnum = $request->ResNum;
-        $order->refnum = $request->RefNum;
-        $order->status = 'paid';
-        $order->save();
+        if ($verifyResult["ResultCode"] != 0) {
+            return "تراکنش تایید نشد: " . json_encode($verifyResult, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
+        }
 
-        // نمایش رسید دیجیتال
-        $transaction = $verifyResult["TransactionDetail"];
-        return response("
-            <h2>پرداخت موفق بود 🎉</h2>
-            <p>رسید دیجیتال (RefNum): {$request->RefNum}</p>
-            <p>RRN: {$transaction['RRN']}</p>
-            <p>مبلغ: " . number_format($transaction['OrginalAmount']) . " تومان</p>
-        ", 200);
+        // 4) ذخیره سفارش
+        Order::create([
+            'product_id' => 1,
+            'resnum'     => $request->ResNum,
+            'refnum'     => $request->RefNum,
+            'amount'     => $verifyResult["TransactionDetail"]["OrginalAmount"],
+            'rrn'        => $verifyResult["TransactionDetail"]["RRN"],
+            'status'     => 'paid',
+        ]);
+
+        // 5) نمایش نتیجه موفق
+        $txn = $verifyResult["TransactionDetail"];
+
+        return "<h2>پرداخت موفق بود 🎉</h2>
+                <p>RefNum: {$request->RefNum}</p>
+                <p>Rrn: {$txn['RRN']}</p>
+                <p>شماره پیگیری: {$request->TraceNo}</p>
+                <p>مبلغ: " . number_format($txn['OrginalAmount']) . " تومان</p>
+                <p>کارت: {$txn['MaskedPan']}</p>";
     }
 }

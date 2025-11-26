@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PayController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Middleware\Founder;
 use App\Http\Middleware\SuperAdmin;
@@ -95,12 +96,11 @@ Volt::route('sepp/pay', 'pay');
 Route::get('/purchase-icdl', PurchaseIcdl::class);
 
 Route::post('/payment/callback', [PaymentController::class, 'callback'])
-    ->withoutMiddleware([
-        \App\Http\Middleware\VerifyCsrfToken::class,
-        \Illuminate\Session\Middleware\StartSession::class,
-    ])
-    ->name('payment.callback');
+    ->withoutMiddleware(['web'])->name('payment.callback');
 
 
 //Route::post('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
 
+
+
+Route::post('pay/callback', [PayController::class, 'call_back'])->withoutMiddleware(['web'])->name('pay.callback');

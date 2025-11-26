@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->string('resnum')->unique();
             $table->string('refnum')->nullable();
+            $table->bigInteger('amount')->nullable();
+            $table->string('rrn')->nullable();
             $table->string('status'); // paid / failed
             $table->timestamps();
         });
