@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
 use App\Http\Middleware\Founder;
 use App\Http\Middleware\SuperAdmin;
+use App\Livewire\PurchaseIcdl;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -79,10 +81,26 @@ Volt::route('exam_user/{examUser}/result', 'exam.result')->name('exam.result')->
 
 
 use App\Http\Controllers\TestSepController;
-Volt::route('payment/callback', 'payment.callback');
+//Volt::route('payment/callback', 'payment.callback');
 
 Route::get('sep/test', [TestSepController::class, 'start'])->name('sep.test');
 Route::post('sep/pay', [TestSepController::class, 'pay'])->name('sep.pay');
-Route::match(['get', 'post'], 'sep/callback', [TestSepController::class, 'callback'])->name('sep.callback');
+//Route::match(['get', 'post'], 'sep/callback', [TestSepController::class, 'callback'])->name('sep.callback');
 
 Volt::route('sepp/pay', 'pay');
+
+
+
+
+Route::get('/purchase-icdl', PurchaseIcdl::class);
+
+Route::post('/payment/callback', [PaymentController::class, 'callback'])
+    ->withoutMiddleware([
+        \App\Http\Middleware\VerifyCsrfToken::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+    ])
+    ->name('payment.callback');
+
+
+//Route::post('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+
